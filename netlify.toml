@@ -1,0 +1,7 @@
+[build]
+  publish = "."  # Publish the current directory
+
+[[redirects]]
+  from = "/"
+  to = "/Estimator.html"
+  status = 200  # Serve the file, don't redirect

@@ -1,0 +1,33 @@
+{
+    "name": "Concrete Estimator",
+    "short_name": "Estimator",
+    "description": "Tool for estimating concrete jobs.",
+    "start_url": "Estimator.html",
+    "display": "standalone",
+    "background_color": "#f4f4f4",
+    "theme_color": "#007bff",
+    "icons": [
+        {
+            "src": "icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "screenshot1.png",
+            "sizes": "640x480",
+            "type": "image/png"
+        },
+        {
+            "src": "screenshot2.png",
+            "sizes": "1280x720",
+            "type": "image/png"
+        }
+    ]
+}
