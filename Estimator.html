@@ -24,6 +24,68 @@
     <title>Concrete Estimator</title>
     <style>
         
+        /* The Modal (hidden by default) */
+        #formula-generator-modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content/Box */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto; /* 10% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be 80% or a fixed size */
+            max-width: 600px; /* Optional: maximum width */
+        }
+
+        /* The Close Button */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Bracket Row Styling (adjust as needed) */
+        #modal-brackets .bracket-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 5px;
+            align-items: center;
+        }
+
+        #modal-brackets .bracket-row input {
+            width: 80px;
+        }
+
+        #modal-brackets .bracket-row select {
+            width: 100px;
+        }
+
+        #modal-brackets .cost-per-sf-input {
+            display: block;
+        }
+
+        #modal-brackets .fixed-cost-input {
+            display: none;
+        }
         /* Basic Styling */
         body {
             font-family: sans-serif;
@@ -1139,6 +1201,122 @@
             </div>
         </div>
 
+        <div id="formula-generator-modal"
+            style="display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4);">
+            <div class="modal-content"
+                style="background-color: #fefefe; margin: 10% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 600px;">
+                <span class="close"
+                    style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+                <h2>Formula Generator</h2>
+        
+                <div>
+                    <label for="modal-minTotalCost">Minimum Total Cost:</label>
+                    <input type="number" id="modal-minTotalCost" value="1500">
+                    <label for="modal-flatCost">Flat Cost:</label>
+                    <input type="number" id="modal-flatCost" value="0">
+                </div>
+        
+                <div id="modal-brackets">
+                    <h2>Square Footage Brackets</h2>
+                    <div class="bracket-row">
+                        <input type="number" class="min-bracket-sf" placeholder="Min SF" value="1">
+                        <input type="number" class="max-bracket-sf" placeholder="Max SF" value="250">
+                        <select class="cost-type">
+                            <option value="costPerSf">Cost/SF</option>
+                            <option value="fixedCost">Fixed Cost</option>
+                        </select>
+                        <input type="number" class="cost-per-sf-input" placeholder="Cost/SF" value="10">
+                        <input type="number" class="fixed-cost-input" placeholder="Fixed Cost" style="display: none;">
+                        <button class="remove-bracket">Remove</button>
+                    </div>
+                    <div class="bracket-row">
+                        <input type="number" class="min-bracket-sf" placeholder="Min SF" value="251">
+                        <input type="number" class="max-bracket-sf" placeholder="Max SF" value="350">
+                        <select class="cost-type">
+                            <option value="costPerSf">Cost/SF</option>
+                            <option value="fixedCost">Fixed Cost</option>
+                        </select>
+                        <input type="number" class="cost-per-sf-input" placeholder="Cost/SF" value="9.85">
+                        <input type="number" class="fixed-cost-input" placeholder="Fixed Cost" style="display: none;">
+                        <button class="remove-bracket">Remove</button>
+                    </div>
+                    <div class="bracket-row">
+                        <input type="number" class="min-bracket-sf" placeholder="Min SF" value="351">
+                        <input type="number" class="max-bracket-sf" placeholder="Max SF" value="499">
+                        <select class="cost-type">
+                            <option value="costPerSf">Cost/SF</option>
+                            <option value="fixedCost">Fixed Cost</option>
+                        </select>
+                        <input type="number" class="cost-per-sf-input" placeholder="Cost/SF" value="9.65">
+                        <input type="number" class="fixed-cost-input" placeholder="Fixed Cost" style="display: none;">
+                        <button class="remove-bracket">Remove</button>
+                    </div>
+                    <div class="bracket-row">
+                        <input type="number" class="min-bracket-sf" placeholder="Min SF" value="500">
+                        <input type="number" class="max-bracket-sf" placeholder="Max SF" value="650">
+                        <select class="cost-type">
+                            <option value="costPerSf">Cost/SF</option>
+                            <option value="fixedCost">Fixed Cost</option>
+                        </select>
+                        <input type="number" class="cost-per-sf-input" placeholder="Cost/SF" value="9.55">
+                        <input type="number" class="fixed-cost-input" placeholder="Fixed Cost" style="display: none;">
+                        <button class="remove-bracket">Remove</button>
+                    </div>
+                    <div class="bracket-row">
+                        <input type="number" class="min-bracket-sf" placeholder="Min SF" value="651">
+                        <input type="number" class="max-bracket-sf" placeholder="Max SF" value="800">
+                        <select class="cost-type">
+                            <option value="costPerSf">Cost/SF</option>
+                            <option value="fixedCost">Fixed Cost</option>
+                        </select>
+                        <input type="number" class="cost-per-sf-input" placeholder="Cost/SF" value="9.45">
+                        <input type="number" class="fixed-cost-input" placeholder="Fixed Cost" style="display: none;">
+                        <button class="remove-bracket">Remove</button>
+                    </div>
+                    <div class="bracket-row">
+                        <input type="number" class="min-bracket-sf" placeholder="Min SF" value="801">
+                        <input type="number" class="max-bracket-sf" placeholder="Max SF" value="1200">
+                        <select class="cost-type">
+                            <option value="costPerSf">Cost/SF</option>
+                            <option value="fixedCost">Fixed Cost</option>
+                        </select>
+                        <input type="number" class="cost-per-sf-input" placeholder="Cost/SF" value="9.35">
+                        <input type="number" class="fixed-cost-input" placeholder="Fixed Cost" style="display: none;">
+                        <button class="remove-bracket">Remove</button>
+                    </div>
+                    <div class="bracket-row">
+                        <input type="number" class="min-bracket-sf" placeholder="Min SF" value="1201">
+                        <input type="number" class="max-bracket-sf" placeholder="Max SF" value="1600">
+                        <select class="cost-type">
+                            <option value="costPerSf">Cost/SF</option>
+                            <option value="fixedCost">Fixed Cost</option>
+                        </select>
+                        <input type="number" class="cost-per-sf-input" placeholder="Cost/SF" value="9.25">
+                        <input type="number" class="fixed-cost-input" placeholder="Fixed Cost" style="display: none;">
+                        <button class="remove-bracket">Remove</button>
+                    </div>
+                    <div class="bracket-row">
+                        <input type="number" class="min-bracket-sf" placeholder="Min SF" value="1601">
+                        <input type="number" class="max-bracket-sf" placeholder="Max SF">
+                        <select class="cost-type">
+                            <option value="costPerSf">Cost/SF</option>
+                            <option value="fixedCost">Fixed Cost</option>
+                        </select>
+                        <input type="number" class="cost-per-sf-input" placeholder="Cost/SF" value="9.15">
+                        <input type="number" class="fixed-cost-input" placeholder="Fixed Cost" style="display: none;">
+                        <button class="remove-bracket">Remove</button>
+                    </div>
+                </div>
+        
+                <button id="modal-add-bracket">Add Bracket</button>
+                <button id="modal-generate">Generate JavaScript Code</button>
+                <button id="modal-use-formula">Use Formula</button>
+        
+                <h2>Generated Code</h2>
+                <textarea id="modal-output" readonly></textarea>
+            </div>
+        </div>
+
         <div id="scope-templates-section" class="page-section">
             <h2>Scope of Work Templates</h2>
             <p>Manage reusable scope of work templates. Select a template on the Dashboard to pre-fill the Scope of Work
@@ -1380,6 +1558,249 @@
             if (isNaN(numAmount)) { console.warn("formatCurrency received non-numeric value:", amount); return "$NaN"; }
             return numAmount.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
         }
+
+        function openFormulaGeneratorModal(itemIndex) {
+                const modal = document.getElementById('formula-generator-modal');
+                if (modal) {
+                    modal.style.display = 'block';
+
+                    // Find the button that was clicked
+                    const openingButton = document.querySelector(`#btn-generate-formula-${itemIndex}`);
+                    if (openingButton) {
+                        // Add a class to the button to mark it as the active button
+                        openingButton.classList.add('active-generator-button');
+                    }
+
+                    // --- PRE-FILL MODAL INPUTS --- (Modified)
+                    const minTotalCostInput = modal.querySelector('#modal-minTotalCost');
+                    const flatCostInput = modal.querySelector('#modal-flatCost');
+                    const bracketsDiv = modal.querySelector('#modal-brackets');
+                    const outputTextarea = modal.querySelector('#modal-output');
+
+                    // Clear existing brackets
+                    bracketsDiv.innerHTML = '';
+
+                    if (Array.isArray(currentItems) && itemIndex >= 0 && itemIndex < currentItems.length) {
+                        const item = currentItems[itemIndex];
+                        if (item.formulaGeneratorState) {
+                            const state = item.formulaGeneratorState;
+                            minTotalCostInput.value = state.minTotalCost || 1500;
+                            flatCostInput.value = state.flatCost || 0;
+
+                            if (Array.isArray(state.brackets)) {
+                                state.brackets.forEach(bracket => {
+                                    addBracketToModal(bracketsDiv, bracket);
+                                });
+                            } else {
+                                // Add default brackets if none in state
+                                addBracketToModal(bracketsDiv, { minSf: 1, maxSf: 250, costType: 'costPerSf', costValue: 10 });
+                                addBracketToModal(bracketsDiv, { minSf: 251, maxSf: 350, costType: 'costPerSf', costValue: 9.85 });
+                                addBracketToModal(bracketsDiv, { minSf: 351, maxSf: 499, costType: 'costPerSf', costValue: 9.65 });
+                                addBracketToModal(bracketsDiv, { minSf: 500, maxSf: 650, costType: 'costPerSf', costValue: 9.55 });
+                                addBracketToModal(bracketsDiv, { minSf: 651, maxSf: 800, costType: 'costPerSf', costValue: 9.45 });
+                                addBracketToModal(bracketsDiv, { minSf: 801, maxSf: 1200, costType: 'costPerSf', costValue: 9.35 });
+                                addBracketToModal(bracketsDiv, { minSf: 1201, maxSf: 1600, costType: 'costPerSf', costValue: 9.25 });
+                                addBracketToModal(bracketsDiv, { minSf: 1601, maxSf: null, costType: 'costPerSf', costValue: 9.15 });
+                            }
+
+                            // Trigger code generation to show existing formula
+                            generateJavaScriptCode(bracketsDiv, minTotalCostInput, flatCostInput, outputTextarea);
+                        } else {
+                            //If no formulaGeneratorState, add default brackets
+                            addBracketToModal(bracketsDiv, { minSf: 1, maxSf: 250, costType: 'costPerSf', costValue: 10 });
+                            addBracketToModal(bracketsDiv, { minSf: 251, maxSf: 350, costType: 'costPerSf', costValue: 9.85 });
+                            addBracketToModal(bracketsDiv, { minSf: 351, maxSf: 499, costType: 'costPerSf', costValue: 9.65 });
+                            addBracketToModal(bracketsDiv, { minSf: 500, maxSf: 650, costType: 'costPerSf', costValue: 9.55 });
+                            addBracketToModal(bracketsDiv, { minSf: 651, maxSf: 800, costType: 'costPerSf', costValue: 9.45 });
+                            addBracketToModal(bracketsDiv, { minSf: 801, maxSf: 1200, costType: 'costPerSf', costValue: 9.35 });
+                            addBracketToModal(bracketsDiv, { minSf: 1201, maxSf: 1600, costType: 'costPerSf', costValue: 9.25 });
+                            addBracketToModal(bracketsDiv, { minSf: 1601, maxSf: null, costType: 'costPerSf', costValue: 9.15 });
+                            generateJavaScriptCode(bracketsDiv, minTotalCostInput, flatCostInput, outputTextarea);
+                        }
+
+                    } else {
+                        console.error("Invalid item index or currentItems array.");
+                    }
+                    // --- END PRE-FILL ---
+                } else {
+                    console.error("Formula generator modal not found.");
+                }
+            }
+            
+        // 4. Event Listener for "Generate"
+        const modalGenerateButton = document.getElementById('modal-generate');
+            if (modalGenerateButton) {
+                modalGenerateButton.addEventListener('click', () => {
+                    const modalBracketsDiv = document.getElementById('modal-brackets');
+                    const modalMinTotalCostInput = document.getElementById('modal-minTotalCost');
+                    const modalFlatCostInput = document.getElementById('modal-flatCost');
+                    const modalOutputTextarea = document.getElementById('modal-output');
+                    const generatedCode = generateJavaScriptCode(modalBracketsDiv, modalMinTotalCostInput, modalFlatCostInput, modalOutputTextarea);
+                    modalOutputTextarea.value = generatedCode;
+                });
+            } else {
+                console.error("Modal 'Generate' button not found.");
+            }
+
+        // 5. Add event listener for the "Use Formula" button
+        const modalUseFormulaButton = document.getElementById('modal-use-formula');
+            if (modalUseFormulaButton) {
+                modalUseFormulaButton.addEventListener('click', () => {
+                    const modal = document.getElementById('formula-generator-modal');
+                    const formula = document.getElementById('modal-output').value;
+                    if (formula) {
+                        // Find the button that opened the modal
+                        const openingButton = document.querySelector('.generate-formula-button.active-generator-button');
+                        if (openingButton) {
+                            // Find the input field in the same table cell
+                            const inputFormula = openingButton.previousElementSibling; // Assuming input is *before* the button
+                            if (inputFormula && inputFormula.classList.contains('item-formula')) {
+                                inputFormula.value = formula;
+                                inputFormula.dispatchEvent(new Event('input', { bubbles: true })); // Trigger input event
+                                modal.style.display = 'none'; // Close modal
+                            } else {
+                                console.warn("Could not find the associated inputFormula field.");
+                                alert("Error: Could not find the correct formula input field.");
+                            }
+                            // Remove the active class
+                            openingButton.classList.remove('active-generator-button');
+                        } else {
+                            console.warn("Could not determine which button opened the modal.");
+                            alert("Error: Please open the formula generator from a valid formula input field.");
+                        }
+                    }
+                });
+            } else {
+                console.error("Modal 'Use Formula' button not found.");
+            }
+        
+        // 6. Event listener for the modal's close button
+        const modalCloseButton = document.querySelector('#formula-generator-modal .close');
+            if (modalCloseButton) {
+                modalCloseButton.addEventListener('click', () => {
+                    document.getElementById('formula-generator-modal').style.display = 'none';
+                });
+            } else {
+                console.error("Modal close button not found.");
+            }
+        
+        // 7. Event listener for adding bracket
+        const modalAddBracketButton = document.getElementById('modal-add-bracket');
+        if (modalAddBracketButton) {
+            modalAddBracketButton.addEventListener('click', () => {
+                const bracketsDiv = document.getElementById('modal-brackets');
+                addBracketToModal(bracketsDiv, { minSf: 0, maxSf: null, costType: 'costPerSf', costValue: 10 });
+            });
+        } else {
+            console.error("Modal 'Add Bracket' button not found.");
+        }
+
+        function addBracketToModal(bracketsDiv, bracket) {
+                const newBracketRow = document.createElement('div');
+                newBracketRow.classList.add('bracket-row');
+                newBracketRow.innerHTML = `
+        <input type="number" class="min-bracket-sf" placeholder="Min SF" value="${bracket.minSf || 0}">
+        <input type="number" class="max-bracket-sf" placeholder="Max SF" value="${bracket.maxSf || ''}">
+        <select class="cost-type">
+            <option value="costPerSf" ${bracket.costType === 'costPerSf' ? 'selected' : ''}>Cost/SF</option>
+            <option value="fixedCost" ${bracket.costType === 'fixedCost' ? 'selected' : ''}>Fixed Cost</option>
+        </select>
+        <input type="number" class="cost-per-sf-input" placeholder="Cost/SF" value="${bracket.costValue || 10}" style="display: ${bracket.costType === 'costPerSf' ? 'block' : 'none'}">
+        <input type="number" class="fixed-cost-input" placeholder="Fixed Cost" value="${bracket.costValue || 0}" style="display: ${bracket.costType === 'fixedCost' ? 'block' : 'none'}">
+        <button class="remove-bracket">Remove</button>
+    `;
+                bracketsDiv.appendChild(newBracketRow);
+
+                // Event listener for the "Remove" button of the *new* row
+                const removeButton = newBracketRow.querySelector('.remove-bracket');
+                removeButton.addEventListener('click', () => {
+                    newBracketRow.remove();
+                });
+
+                // Event listener for the cost type change of the *new* row
+                const costTypeSelect = newBracketRow.querySelector('.cost-type');
+                const costPerSfInput = newBracketRow.querySelector('.cost-per-sf-input');
+                const fixedCostInput = newBracketRow.querySelector('.fixed-cost-input');
+
+                costTypeSelect.addEventListener('change', () => {
+                    if (costTypeSelect.value === 'costPerSf') {
+                        costPerSfInput.style.display = 'block';
+                        fixedCostInput.style.display = 'none';
+                    } else {
+                        costPerSfInput.style.display = 'none';
+                        fixedCostInput.style.display = 'block';
+                    }
+                });
+            }
+
+        function generateJavaScriptCode(bracketsDiv, minTotalCostInput, flatCostInput, outputTextarea) {
+                const minTotalCost = parseFloat(minTotalCostInput.value);
+                const flatCost = parseFloat(flatCostInput.value) || 0;
+                const brackets = [];
+
+                // Get bracket data from the DOM
+                const bracketRows = bracketsDiv.querySelectorAll('.bracket-row');
+                bracketRows.forEach(row => {
+                    const minBracketSf = parseFloat(row.querySelector('.min-bracket-sf').value);
+                    const maxBracketSf = row.querySelector('.max-bracket-sf').value === "" ? Infinity : parseFloat(row.querySelector('.max-bracket-sf').value);
+                    const costType = row.querySelector('.cost-type').value;
+                    let costValue;
+                    if (costType === 'costPerSf') {
+                        costValue = parseFloat(row.querySelector('.cost-per-sf-input').value);
+                    } else {
+                        costValue = parseFloat(row.querySelector('.fixed-cost-input').value);
+                    }
+
+                    if (!isNaN(minBracketSf) && !isNaN(costValue)) {
+                        brackets.push({
+                            minSf: minBracketSf,
+                            maxSf: maxBracketSf,
+                            costType: costType,
+                            costValue: costValue
+                        });
+                    }
+                });
+
+                let code = "";
+
+                // Build the nested ternary expression
+                code = `(quantity >= 0 ? `; // Start with the non-negative check
+
+                brackets.forEach((bracket, index) => {
+                    code += `(quantity >= ${bracket.minSf}`;
+                    if (bracket.maxSf !== Infinity) {
+                        code += ` && quantity <= ${bracket.maxSf}`;
+                    }
+                    code += ` ? `;
+                    if (bracket.costType === 'costPerSf') {
+                        code += `quantity * ${bracket.costValue} + ${flatCost} : `;
+                    } else {
+                        code += `${bracket.costValue} : `;
+                    }
+                });
+
+                // Handle default cost (if no bracket matches)
+                let endDefault = `(quantity * 0 + ${flatCost})`; // Or a more appropriate default
+                if (brackets.length > 0 && brackets[brackets.length - 1].maxSf === Infinity && brackets[brackets.length - 1].costType === 'costPerSf') {
+                    endDefault = `(quantity * ${brackets[brackets.length - 1].costValue} + ${flatCost})`;
+                } else if (brackets.length > 0 && brackets[brackets.length - 1].maxSf === Infinity && brackets[brackets.length - 1].costType === 'fixedCost') {
+                    endDefault = `${brackets[brackets.length - 1].costValue}`;
+                }
+                code += `${endDefault}`;
+
+                for (let i = 0; i < brackets.length; i++) {
+                    code += ")";
+                }
+
+                code += ` : 0)`; // Close the initial quantity check
+
+                // Add the minTotalCost check *outside* the bracket calculation
+                if (!isNaN(minTotalCost)) {
+                    code = `(${code} < ${minTotalCost} ? ${minTotalCost} : ${code})`;
+                }
+
+                return code;
+            }
 
         function showFeedback(feedbackElement, message, color = 'green', duration = 3000) {
             if (!feedbackElement) { console.warn("Feedback element missing for message:", message); return; }
@@ -2004,42 +2425,143 @@
 
 
         function displayCostItemSettings() {
-            if (!markupInput || !settingsItemsBody || !costItemsSection) { console.error("Missing cost item settings elements."); return; }
-            clearValidationErrors(costItemsSection);
-            markupInput.value = currentMarkup;
-            settingsItemsBody.innerHTML = ''; // Clear previous rows
-            if (!Array.isArray(currentItems) || currentItems.length === 0) {
-                const row = settingsItemsBody.insertRow(); const cell = row.insertCell(); cell.colSpan = 6; cell.textContent = "No items defined. Add items below."; cell.style.textAlign = 'center'; cell.style.fontStyle = 'italic'; return;
-            }
+                if (!markupInput || !settingsItemsBody || !costItemsSection) {
+                    console.error("Missing cost item settings elements.");
+                    return;
+                }
+                clearValidationErrors(costItemsSection);
+                markupInput.value = currentMarkup;
+                settingsItemsBody.innerHTML = ''; // Clear previous rows
+                if (!Array.isArray(currentItems) || currentItems.length === 0) {
+                    const row = settingsItemsBody.insertRow();
+                    const cell = row.insertCell();
+                    cell.colSpan = 6;
+                    cell.textContent = "No items defined. Add items below.";
+                    cell.style.textAlign = 'center';
+                    cell.style.fontStyle = 'italic';
+                    return;
+                }
 
-            currentItems.forEach((item, index) => {
-                const row = settingsItemsBody.insertRow(); row.setAttribute('data-index', index);
-                // Name
-                const cellName = row.insertCell(); const inputName = document.createElement('input'); inputName.type = 'text'; inputName.className = 'item-name'; inputName.value = item.name || ''; cellName.appendChild(inputName);
-                // Type
-                const cellType = row.insertCell(); const selectType = document.createElement('select'); selectType.className = 'item-pricing-type'; ['Fixed', 'Formula'].forEach(type => { const opt = document.createElement('option'); opt.value = type; opt.textContent = type; if ((item.pricingType || 'Fixed') === type) opt.selected = true; selectType.appendChild(opt); }); cellType.appendChild(selectType);
-                // Unit
-                const cellUnit = row.insertCell(); const inputUnit = document.createElement('input'); inputUnit.type = 'text'; inputUnit.className = 'item-unit'; inputUnit.value = item.unit || ''; cellUnit.appendChild(inputUnit);
-                // Value (Cost/Formula)
-                const cellVal = row.insertCell();
-                const inputCost = document.createElement('input'); inputCost.type = 'number'; inputCost.className = 'item-cost'; inputCost.value = parseFloat(item.cost || 0).toFixed(2); inputCost.min = '0'; inputCost.step = '0.01'; inputCost.style.display = (item.pricingType !== 'Formula') ? 'block' : 'none'; cellVal.appendChild(inputCost);
-                const inputFormula = document.createElement('input'); inputFormula.type = 'text'; inputFormula.className = 'item-formula'; inputFormula.value = item.formula || ''; inputFormula.placeholder = 'e.g., quantity * 5'; inputFormula.title = "Use vars: quantity, jobArea, jobThickness"; inputFormula.style.display = (item.pricingType === 'Formula') ? 'block' : 'none'; cellVal.appendChild(inputFormula);
-                // Description
-                const cellDesc = row.insertCell(); const inputDesc = document.createElement('textarea'); inputDesc.className = 'item-description'; inputDesc.value = item.description || ''; inputDesc.rows = 1; cellDesc.appendChild(inputDesc);
-                // Action Cell
-                const cellAction = row.insertCell(); cellAction.style.textAlign = 'center'; cellAction.style.whiteSpace = 'nowrap';
-                const btnUp = document.createElement('button'); btnUp.innerHTML = '&uarr;'; btnUp.title = 'Move Up'; btnUp.className = 'move-button'; btnUp.disabled = (index === 0); btnUp.onclick = (e) => { e.preventDefault(); moveCostItem(index, -1); }; cellAction.appendChild(btnUp);
-                const btnDown = document.createElement('button'); btnDown.innerHTML = '&darr;'; btnDown.title = 'Move Down'; btnDown.className = 'move-button'; btnDown.disabled = (index === currentItems.length - 1); btnDown.onclick = (e) => { e.preventDefault(); moveCostItem(index, 1); }; cellAction.appendChild(btnDown);
-                const btnDel = document.createElement('button'); btnDel.textContent = 'Del'; btnDel.title = 'Delete Item'; btnDel.className = 'delete-button'; btnDel.style.marginLeft = '4px'; btnDel.onclick = (e) => { e.preventDefault(); deleteItem(index); }; cellAction.appendChild(btnDel);
-                // Event Listener for Type change
-                selectType.onchange = () => {
-                    inputCost.style.display = (selectType.value === 'Fixed') ? 'block' : 'none';
-                    inputFormula.style.display = (selectType.value === 'Formula') ? 'block' : 'none';
-                    setSaveButtonState(btnSaveCostItems, true);
-                };
-            });
-            setSaveButtonState(btnSaveCostItems, false); // Reset save state on display
-        }
+                currentItems.forEach((item, index) => {
+                    const row = settingsItemsBody.insertRow();
+                    row.setAttribute('data-index', index);
+
+                    // Name
+                    const cellName = row.insertCell();
+                    const inputName = document.createElement('input');
+                    inputName.type = 'text';
+                    inputName.className = 'item-name';
+                    inputName.value = item.name || '';
+                    cellName.appendChild(inputName);
+
+                    // Type
+                    const cellType = row.insertCell();
+                    const selectType = document.createElement('select');
+                    selectType.className = 'item-pricing-type';
+                    ['Fixed', 'Formula'].forEach(type => {
+                        const opt = document.createElement('option');
+                        opt.value = type;
+                        opt.textContent = type;
+                        if ((item.pricingType || 'Fixed') === type) opt.selected = true;
+                        selectType.appendChild(opt);
+                    });
+                    cellType.appendChild(selectType);
+
+                    // Unit
+                    const cellUnit = row.insertCell();
+                    const inputUnit = document.createElement('input');
+                    inputUnit.type = 'text';
+                    inputUnit.className = 'item-unit';
+                    inputUnit.value = item.unit || '';
+                    cellUnit.appendChild(inputUnit);
+
+                    // Value (Cost/Formula)
+                    const cellVal = row.insertCell();
+                    const inputCost = document.createElement('input');
+                    inputCost.type = 'number';
+                    inputCost.className = 'item-cost';
+                    inputCost.value = parseFloat(item.cost || 0).toFixed(2);
+                    inputCost.min = '0';
+                    inputCost.step = '0.01';
+                    inputCost.style.display = (item.pricingType !== 'Formula') ? 'block' : 'none';
+                    cellVal.appendChild(inputCost);
+
+                    const inputFormula = document.createElement('input');
+                    inputFormula.type = 'text';
+                    inputFormula.className = 'item-formula';
+                    inputFormula.value = item.formula || '';
+                    inputFormula.placeholder = 'e.g., quantity * 5';
+                    inputFormula.title = "Use vars: quantity, jobArea, jobThickness";
+                    inputFormula.style.display = (item.pricingType === 'Formula') ? 'block' : 'none';
+                    cellVal.appendChild(inputFormula);
+
+                    // --- FORMULA GENERATOR BUTTON (SYMBOL) ---
+                    const generateFormulaButton = document.createElement('button');
+                    generateFormulaButton.innerHTML = 'f(x)';
+                    generateFormulaButton.title = 'Generate Formula';
+                    generateFormulaButton.className = 'generate-formula-button';
+                    generateFormulaButton.id = `btn-generate-formula-${index}`;
+                    generateFormulaButton.addEventListener('click', () => openFormulaGeneratorModal(index));
+                    cellVal.appendChild(generateFormulaButton);
+                    generateFormulaButton.style.fontSize = '0.8em';
+                    generateFormulaButton.style.padding = '2px 5px';
+                    // --- END FORMULA GENERATOR BUTTON ---
+
+                    // Description
+                    const cellDesc = row.insertCell();
+                    const inputDesc = document.createElement('textarea');
+                    inputDesc.className = 'item-description';
+                    inputDesc.value = item.description || '';
+                    inputDesc.rows = 1;
+                    cellDesc.appendChild(inputDesc);
+
+                    // Action Cell
+                    const cellAction = row.insertCell();
+                    cellAction.style.textAlign = 'center';
+                    cellAction.style.whiteSpace = 'nowrap';
+
+                    const btnUp = document.createElement('button');
+                    btnUp.innerHTML = '&uarr;';
+                    btnUp.title = 'Move Up';
+                    btnUp.className = 'move-button';
+                    btnUp.disabled = (index === 0);
+                    btnUp.onclick = (e) => {
+                        e.preventDefault();
+                        moveCostItem(index, -1);
+                    };
+                    cellAction.appendChild(btnUp);
+
+                    const btnDown = document.createElement('button');
+                    btnDown.innerHTML = '&darr;';
+                    btnDown.title = 'Move Down';
+                    btnDown.className = 'move-button';
+                    btnDown.disabled = (index === currentItems.length - 1);
+                    btnDown.onclick = (e) => {
+                        e.preventDefault();
+                        moveCostItem(index, 1);
+                    };
+                    cellAction.appendChild(btnDown);
+
+                    const btnDel = document.createElement('button');
+                    btnDel.textContent = 'Del';
+                    btnDel.title = 'Delete Item';
+                    btnDel.className = 'delete-button';
+                    btnDel.style.marginLeft = '4px';
+                    btnDel.onclick = (e) => {
+                        e.preventDefault();
+                        deleteItem(index);
+                    };
+                    cellAction.appendChild(btnDel);
+
+                    // Event Listener for Type change
+                    selectType.onchange = () => {
+                        inputCost.style.display = (selectType.value === 'Fixed') ? 'block' : 'none';
+                        inputFormula.style.display = (selectType.value === 'Formula') ? 'block' : 'none';
+                        setSaveButtonState(btnSaveCostItems, true);
+                    };
+                });
+                setSaveButtonState(btnSaveCostItems, false); // Reset save state on display
+            }
 
         function displayPdfSettings() {
             // --- ADDED/CONFIRMED LINES START ---
@@ -2347,7 +2869,27 @@
                         if (!rowIsValid) {
                             isValid = false; // If any row is invalid, the whole save is invalid
                         } else {
-                            updatedItems.push({ name, pricingType: type, unit, cost: (type === 'Fixed') ? cost : 0, formula: (type === 'Formula') ? formula : "", description });
+                            // --- Save Formula Generator State ---
+                            let formulaGeneratorState = null;
+                            if (type === 'Formula' && formula) {
+                                formulaGeneratorState = {
+                                    minTotalCost: parseFloat(document.getElementById('modal-minTotalCost').value),
+                                    flatCost: parseFloat(document.getElementById('modal-flatCost').value),
+                                    brackets: []
+                                };
+
+                                const bracketRows = document.querySelectorAll('#modal-brackets .bracket-row');
+                                bracketRows.forEach(bracketRow => {
+                                    formulaGeneratorState.brackets.push({
+                                        minSf: parseFloat(bracketRow.querySelector('.min-bracket-sf').value) || 0,
+                                        maxSf: parseFloat(bracketRow.querySelector('.max-bracket-sf').value) || null,
+                                        costType: bracketRow.querySelector('.cost-type').value,
+                                        costValue: parseFloat(bracketRow.querySelector(bracketRow.querySelector('.cost-type').value === 'costPerSf' ? '.cost-per-sf-input' : '.fixed-cost-input').value)
+                                    });
+                                });
+                            }
+                            // --- End Save Formula Generator State ---
+                            updatedItems.push({ name, pricingType: type, unit, cost: (type === 'Fixed') ? cost : 0, formula: (type === 'Formula') ? formula : "", description, formulaGeneratorState });
                         }
                     });
                 }
@@ -2362,7 +2904,7 @@
                 }
 
                 currentItems = updatedItems;
-                currentMarkup = newMarkup; 
+                currentMarkup = newMarkup;
 
                 if (saveCurrentDataToActiveProfile(costItemsFeedback)) {
                     displayCostItemSettings(); // Refresh display from updated globals
