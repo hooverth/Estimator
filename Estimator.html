@@ -1051,40 +1051,45 @@
                     placeholder="Temporary notes for this estimate (shown on Internal PDF, not saved or printed otherwise)..."></textarea>
             </div>
 
-            <div class="running-totals">
-                <h3>Live Estimate Summary</h3>
-                <div> <span class="label">Subtotal (Materials/Labor):</span> <span class="value"
-                        id="running-subtotal">$0.00</span> </div>
-                <div> <span class="label">Markup (<span id="running-markup-percent">0</span>%):</span> <span
-                        class="value" id="running-markup-amount">$0.00</span> </div>
-                <div> <span class="label">Total Before Adjustments:</span> <span class="value"
-                        id="running-total-before-options">$0.00</span> </div>
-                <hr style="border-color: #cce; margin: 5px 0;">
-                <div> <span class="label">Adjustments:</span> <span class="value"
-                        id="running-options-adjustment">$0.00</span>
+            <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-top: 25px;">
+                <div class="running-totals">
+                    <h3>Live Estimate Summary</h3>
+                    <div> <span class="label">Subtotal (Materials/Labor):</span> <span class="value"
+                            id="running-subtotal">$0.00</span> </div>
+                    <div> <span class="label">Markup (<span id="running-markup-percent">0</span>%):</span> <span
+                            class="value" id="running-markup-amount">$0.00</span> </div>
+                    <div> <span class="label">Total Before Adjustments:</span> <span class="value"
+                            id="running-total-before-options">$0.00</span> </div>
+                    <hr style="border-color: #cce; margin: 5px 0;">
+                    <div> <span class="label">Adjustments:</span> <span class="value"
+                            id="running-options-adjustment">$0.00</span>
+                    </div>
+                    <hr style="border-color: #cce; margin: 5px 0;">
+                    <div class="grand-total"> <span class="label">Final Proposal Total:</span> <span class="value"
+                            id="running-grand-total">$0.00</span> </div>
+                    <hr style="border-color: #cce; margin: 10px 0;">
+                    <div> <span class="label">Franchise Fee (8%):</span> <span class="value"
+                            id="running-franchise-fee">$0.00</span>
+                    </div>
+                    <div> <span class="label">Profit After Fee:</span> <span class="value"
+                            id="running-profit-after-fee">$0.00</span> </div>
+                    <div> <span class="label">Price Per Sq Ft:</span> <span class="value"
+                            id="running-price-per-sqft">$0.00</span>
+                    </div>
                 </div>
-                <hr style="border-color: #cce; margin: 5px 0;">
-                <div class="grand-total"> <span class="label">Final Proposal Total:</span> <span class="value"
-                        id="running-grand-total">$0.00</span> </div>
-                <hr style="border-color: #cce; margin: 10px 0;">
-                <div> <span class="label">Franchise Fee (8%):</span> <span class="value"
-                        id="running-franchise-fee">$0.00</span>
+
+                <div id="individual-adjustments-display" class="running-totals" style="flex-grow: 1; min-width: 300px;">
+                    <h3>Individual Adjustments & Options</h3>
+                    <div id="applied-adjustments-list">
+                        <p><i>No non-optional adjustments selected.</i></p>
+                    </div>
+                    <h3 style="margin-top: 15px; margin-bottom: 10px; color: #336;">Selected Optional Additions</h3>
+                    <div id="dashboard-optional-items-list">
+                        <p><i>None selected.</i></p>
+                    </div>
                 </div>
-                <div> <span class="label">Profit After Fee:</span> <span class="value"
-                        id="running-profit-after-fee">$0.00</span> </div>
-                <div> <span class="label">Price Per Sq Ft:</span> <span class="value"
-                        id="running-price-per-sqft">$0.00</span>
-                </div>
-            </div>
-            <div id="dashboard-optional-additions"
-                style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #ccc;">
-                <h3 style="margin-top: 0; margin-bottom: 10px; color: #336;">Selected Optional Additions (Not in Total
-                    Above)
-                </h3>
-                <div id="dashboard-optional-items-list">
-                    <p><i>None selected.</i></p>
-                </div>
-            </div>
+            </div> ```
+
             <div class="pdf-actions">
                 <button id="btn-generate-proposal-pdf"
                     title="Generate the full customer proposal PDF including header and footer.">Full Proposal
@@ -1531,8 +1536,11 @@
         const runningProfitAfterFeeEl = document.getElementById('running-profit-after-fee');
         const runningPricePerSqftEl = document.getElementById('running-price-per-sqft');
         // Optional Additions Display (New)
-        const dashboardOptionalAdditionsDiv = document.getElementById('dashboard-optional-additions');
-        const dashboardOptionalItemsListDiv = document.getElementById('dashboard-optional-items-list');
+        const dashboardOptionalAdditionsDiv = document.getElementById('dashboard-optional-additions'); // This is the old full container, still exists, but new structure
+        const dashboardOptionalItemsListDiv = document.getElementById('dashboard-optional-items-list'); // This is the list inside the new structure
+        // Individual Adjustments/Options Display
+        const individualAdjustmentsDisplay = document.getElementById('individual-adjustments-display');
+        const appliedAdjustmentsListDiv = document.getElementById('applied-adjustments-list');
         // Cost Items Settings
         const markupInput = document.getElementById('markup');
         const markupValidationError = document.getElementById('markup-validation-error');
@@ -4060,43 +4068,203 @@
             const calculationResults = calculateOptionsAndFinalTotal(baseEstimate);
 
             // Fetch optional additions list separately for display
-            const selectedOptionals = getSelectedOptionalAdditionsData();
+            const allActiveDashboardOptions = _getAllDashboardOptionsForDisplay(calculationResults.grandTotal, baseEstimate);
             const sqft = parseFloat(jobAreaInput?.value) || 0;
 
             // Update main display using values from calculationResults
-            if (runningSubtotalEl) runningSubtotalEl.textContent = formatCurrency(calculationResults.newSubtotal); // Use newSubtotal (base items cost)
+            if (runningSubtotalEl) runningSubtotalEl.textContent = formatCurrency(calculationResults.newSubtotal);
             if (runningMarkupPercentEl) runningMarkupPercentEl.textContent = parseFloat(baseEstimate.markupPercent || 0).toFixed(1);
-            if (runningMarkupAmountEl) runningMarkupAmountEl.textContent = formatCurrency(calculationResults.newMarkupAmount); // Use newMarkupAmount (items markup + adjustment markup)
-            if (runningTotalBeforeOptionsEl) runningTotalBeforeOptionsEl.textContent = formatCurrency(calculationResults.newTotalBeforeOptions); // Base + total markup
-            if (runningOptionsAdjustmentEl) runningOptionsAdjustmentEl.textContent = formatCurrency(calculationResults.optionsAdjustment); // This is total of all adjustments (including their markup)
+            if (runningMarkupAmountEl) runningMarkupAmountEl.textContent = formatCurrency(calculationResults.newMarkupAmount);
+            if (runningTotalBeforeOptionsEl) runningTotalBeforeOptionsEl.textContent = formatCurrency(calculationResults.newTotalBeforeOptions);
+            if (runningOptionsAdjustmentEl) runningOptionsAdjustmentEl.textContent = formatCurrency(calculationResults.optionsAdjustment);
             if (runningGrandTotalEl) runningGrandTotalEl.textContent = formatCurrency(calculationResults.grandTotal);
 
             const franchiseFee = calculationResults.grandTotal * 0.08;
-            // Profit After Fee now based on the NEW total markup amount
             const profitAfterFee = calculationResults.newMarkupAmount - franchiseFee;
             const pricePerSqft = sqft > 0 ? calculationResults.grandTotal / sqft : 0;
             if (runningFranchiseFeeEl) runningFranchiseFeeEl.textContent = formatCurrency(franchiseFee);
             if (runningProfitAfterFeeEl) runningProfitAfterFeeEl.textContent = formatCurrency(profitAfterFee);
             if (runningPricePerSqftEl) runningPricePerSqftEl.textContent = formatCurrency(pricePerSqft);
 
-            // Update optional additions display
-            if (dashboardOptionalItemsListDiv) {
-                dashboardOptionalItemsListDiv.innerHTML = '';
-                // Only show optional additions that are actually marked to be shown on the quote (showOnQuote: true)
-                const finalOptionalsForDisplay = selectedOptionals.filter(opt => opt.showOnQuote);
-                if (finalOptionalsForDisplay.length > 0) {
-                    finalOptionalsForDisplay.forEach(opt => {
-                        const itemDiv = document.createElement('div');
-                        itemDiv.style.display = 'flex'; itemDiv.style.justifyContent = 'space-between'; itemDiv.style.marginBottom = '5px'; itemDiv.style.fontSize = '1em';
-                        const nameSpan = document.createElement('span'); nameSpan.textContent = opt.name; nameSpan.style.marginRight = '10px';
-                        const amountSpan = document.createElement('span'); amountSpan.textContent = formatCurrency(opt.amount); amountSpan.style.fontWeight = 'bold';
-                        itemDiv.appendChild(nameSpan); itemDiv.appendChild(amountSpan);
-                        dashboardOptionalItemsListDiv.appendChild(itemDiv);
+            // --- NEW: Update Individual Adjustments & Options Display ---
+            if (individualAdjustmentsDisplay) {
+                individualAdjustmentsDisplay.innerHTML = ''; // Clear previous contents
+
+                const displayHeader = document.createElement('h3');
+                displayHeader.textContent = 'Active Adjustments & Options';
+                individualAdjustmentsDisplay.appendChild(displayHeader);
+
+                if (allActiveDashboardOptions.length > 0) {
+                    const ul = document.createElement('ul');
+                    ul.style.listStyleType = 'none';
+                    ul.style.paddingLeft = '0';
+                    ul.style.margin = '0';
+
+                    allActiveDashboardOptions.forEach(opt => {
+                        const li = document.createElement('li');
+                        li.style.display = 'flex';
+                        li.style.flexWrap = 'wrap'; // Allow wrap for name/amount if space is tight
+                        li.style.justifyContent = 'space-between';
+                        li.style.marginBottom = '6px';
+                        li.style.fontSize = '0.95em';
+                        li.style.borderBottom = '1px dashed #eee';
+                        li.style.paddingBottom = '3px';
+
+                        let nameText = opt.name;
+                        // Add indicators if applicable
+                        if (opt.isOptional) {
+                            nameText += ' (Optional)';
+                        }
+                        if (opt.appliesMarkup) {
+                            nameText += ' (Marked Up)';
+                        }
+                        // Changed from "Hidden on Quote" to just "Hidden"
+                        if (!opt.showOnQuote && (!opt.isOptional || (opt.isOptional && opt.showOnQuote !== true))) { // If not shown and not optional, OR if optional but still explicitely hidden
+                            nameText += ' (Hidden)';
+                        }
+
+
+                        const nameSpan = document.createElement('span');
+                        nameSpan.textContent = `${nameText}:`;
+                        nameSpan.style.marginRight = '10px';
+                        nameSpan.style.flexShrink = '1';
+                        nameSpan.style.wordBreak = 'break-word';
+
+                        const amountSpan = document.createElement('span');
+                        amountSpan.textContent = formatCurrency(opt.amount);
+                        amountSpan.style.fontWeight = 'bold';
+                        amountSpan.style.flexShrink = '0';
+                        amountSpan.style.minWidth = '80px';
+                        amountSpan.style.textAlign = 'right';
+
+                        li.appendChild(nameSpan);
+                        li.appendChild(amountSpan);
+
+                        // Removed the description span here
+                        // if (opt.description) {
+                        //     const descSpan = document.createElement('div');
+                        //     descSpan.textContent = `(${opt.description})`;
+                        //     descSpan.style.fontSize = '0.85em';
+                        //     descSpan.style.color = '#777';
+                        //     descSpan.style.marginTop = '2px';
+                        //     descSpan.style.fontStyle = 'italic';
+                        //     descSpan.style.width = '100%';
+                        //     li.appendChild(descSpan);
+                        // }
+                        ul.appendChild(li);
                     });
+                    individualAdjustmentsDisplay.appendChild(ul);
                 } else {
-                    dashboardOptionalItemsListDiv.innerHTML = '<p><i>None selected.</i></p>';
+                    const p = document.createElement('p');
+                    p.innerHTML = '<i>No adjustments or options currently active.</i>';
+                    p.style.fontSize = '0.9em';
+                    p.style.color = '#777';
+                    p.style.margin = '5px 0 0 0';
+                    individualAdjustmentsDisplay.appendChild(p);
                 }
-            } else { console.warn("Dashboard optional items list div not found for update."); }
+            } else {
+                console.warn("Individual adjustments display div not found for update.");
+            }
+            // --- END NEW: Update Individual Adjustments & Options Display ---
+        }
+
+        // --- NEW HELPER FUNCTION for the Dashboard's Individual Adjustments & Options Display ---
+        // This function will collect ALL selected options/adjustments from the dashboard,
+        // whether permanent or temporary, and calculate their amounts (including markup if applicable).
+        // It does NOT filter by 'showOnQuote' or 'isOptional' because this list is for internal review.
+        function _getAllDashboardOptionsForDisplay(finalGrandTotal, baseEstimate) {
+            const allActiveOptions = [];
+            const markupRate = (parseFloat(baseEstimate.markupPercent) || 0) / 100;
+
+            // --- Process Permanent Proposal Options ---
+            const permanentOptionItems = dashboardOptionsDiv?.querySelectorAll('.dashboard-option-item[data-option-id]');
+            permanentOptionItems?.forEach((item) => {
+                const toggleCheckbox = item.querySelector('.option-toggle-checkbox');
+                const valueInput = item.querySelector('.option-dashboard-value');
+                const optionId = item.getAttribute('data-option-id');
+                const isOptionalCheckbox = item.querySelector('.option-dashboard-is-optional');
+                const showOnQuoteCheckbox = item.querySelector('.option-dashboard-show-toggle');
+                const applyMarkupCheckbox = item.querySelector('.option-dashboard-apply-markup');
+
+                if (toggleCheckbox?.checked && valueInput && optionId) { // Only if selected
+                    const optionDef = currentProposalOptions.find(opt => opt.id === optionId);
+                    if (optionDef) {
+                        const value = parseFloat(valueInput.value) || 0;
+                        const isOptional = isOptionalCheckbox?.checked ?? false;
+                        const showOnQuote = showOnQuoteCheckbox?.checked ?? true;
+                        const applyMarkup = applyMarkupCheckbox?.checked ?? false;
+
+                        let calculatedAmount = value; // Default to fixed value
+                        let markupOnThisAdjustment = 0;
+
+                        if (optionDef.type === 'Percent') {
+                            calculatedAmount = finalGrandTotal * (value / 100);
+                        }
+
+                        if (applyMarkup) {
+                            markupOnThisAdjustment = calculatedAmount * markupRate;
+                        }
+
+                        allActiveOptions.push({
+                            name: optionDef.name || 'Unnamed Option',
+                            description: optionDef.description || '',
+                            amount: calculatedAmount + markupOnThisAdjustment,
+                            isOptional: isOptional,
+                            isTemp: false,
+                            appliesMarkup: applyMarkup,
+                            showOnQuote: showOnQuote
+                        });
+                    }
+                }
+            });
+
+            // --- Process Temporary Proposal Options / Adjustments ---
+            const tempOptionItems = dashboardTempOptionsDiv?.querySelectorAll('.dashboard-option-item[data-temp-option-id]');
+            tempOptionItems?.forEach(container => {
+                const nameInput = container.querySelector('.temp-option-name');
+                const descInput = container.querySelector('.temp-option-description');
+                const typeSelect = container.querySelector('.temp-option-type');
+                const valueInput = container.querySelector('.temp-option-value'); // This is the displayed value
+                const applyMarkupCheckbox = container.querySelector('.temp-option-apply-markup');
+                const isOptionalCheckbox = container.querySelector('.temp-option-is-optional');
+                const showOnQuoteCheckbox = container.querySelector('.temp-option-show-on-quote');
+
+                const name = nameInput?.value.trim() || 'Unnamed Temp Adjustment';
+                const description = descInput?.value.trim() || '';
+                const type = typeSelect?.value || 'Fixed';
+                const displayedValue = parseFloat(valueInput?.value) || 0;
+                const applyMarkup = applyMarkupCheckbox?.checked ?? false;
+                const isOptional = isOptionalCheckbox?.checked ?? false;
+                const showOnQuote = showOnQuoteCheckbox?.checked ?? true;
+
+                if (displayedValue !== 0) { // Only include if there's a non-zero value
+                    let baseValueForCalc = displayedValue;
+                    if (type === 'Fixed' && applyMarkup && markupRate > 0) {
+                        baseValueForCalc = displayedValue / (1 + markupRate); // Reverse calculate to get original cost
+                    }
+
+                    let amount = baseValueForCalc;
+                    if (type === 'Percent') {
+                        amount = finalGrandTotal * (baseValueForCalc / 100);
+                    }
+
+                    let markupOnThisAdjustment = 0;
+                    if (applyMarkup) {
+                        markupOnThisAdjustment = amount * markupRate;
+                    }
+
+                    allActiveOptions.push({
+                        name: name,
+                        description: description,
+                        amount: amount + markupOnThisAdjustment,
+                        isOptional: isOptional,
+                        isTemp: true,
+                        appliesMarkup: applyMarkup,
+                        showOnQuote: showOnQuote
+                    });
+                }
+            });
+            return allActiveOptions;
         }
 
         function clearQuantities() {
