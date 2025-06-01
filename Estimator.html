@@ -1028,6 +1028,7 @@
                 <button id="btn-add-temp-item" class="add-item-button" style="margin-top: 10px;">+ Add Temporary
                     Item</button>
             </div>
+
             <div class="dashboard-info-section">
                 <h3>Proposal Options / Adjustments</h3>
                 <div id="dashboard-options">
@@ -1035,6 +1036,15 @@
                 </div>
             </div>
 
+            <div class="dashboard-info-section">
+                <h3 style="margin-bottom: 10px;">Temporary Job-Specific Options / Adjustments <small
+                        style="font-size: 0.8em; color: #666;">(Not saved to profile)</small></h3>
+                <div id="dashboard-temp-options">
+                    <p><i>No temporary options added.</i></p>
+                </div>
+                <button id="btn-add-temp-option" class="add-item-button" style="margin-top: 10px;">+ Add Temporary
+                    Adjustment</button>
+            </div>
             <div class="dashboard-info-section">
                 <h3>Notes / Scratchpad (Internal Use Only)</h3>
                 <textarea id="dashboard-scratchpad" rows="4"
@@ -1574,6 +1584,9 @@
         // NEW Temporary Item DOM References
         const dashboardTempItemsDiv = document.getElementById('dashboard-temp-items');
         const btnAddTempItem = document.getElementById('btn-add-temp-item');
+        // NEW Temporary Option DOM References
+        const dashboardTempOptionsDiv = document.getElementById('dashboard-temp-options');
+        const btnAddTempOption = document.getElementById('btn-add-temp-option');
         // Error Display
         const initializationErrorDisplay = document.getElementById('initialization-error-display');
         // === JS_DOM_REFS END ===
@@ -1862,6 +1875,9 @@
         function generateTempItemId() {
             return `temp_item_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
         }
+        function generateTempOptionId() { // NEW
+            return `temp_option_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+        }
         function addTempItemToDashboard(tempItem = { id: generateTempItemId(), name: '', cost: 0, description: '', quantity: '' }) {
             if (!dashboardTempItemsDiv) { console.error("dashboardTempItemsDiv not found."); return; }
 
@@ -1933,6 +1949,137 @@
             });
 
             updateSingleTempItemLineCost(); // Initial calculation
+        }
+        function addTempOptionToDashboard(tempOption = { id: generateTempOptionId(), name: '', description: '', type: 'Fixed', value: 0, applyMarkup: false, isOptional: false, showOnQuote: true }) { // ADD showOnQuote to default
+            if (!dashboardTempOptionsDiv) { console.error("dashboardTempOptionsDiv not found."); return; }
+
+            // If it's the first temp option, remove the "No temporary options" message
+            if (dashboardTempOptionsDiv.querySelector('p')?.textContent === 'No temporary options added.') {
+                dashboardTempOptionsDiv.innerHTML = '';
+            }
+
+            const optionContainer = document.createElement('div');
+            optionContainer.className = 'dashboard-option-item'; // Reuse existing styling
+            optionContainer.setAttribute('data-temp-option-id', tempOption.id);
+
+            // Adjusted innerHTML:
+            // 1. Added 'option-dashboard-show-toggle' equivalent for temp options.
+            // 2. Added new container div for "Apply Markup?" and "Make Optional?" for better grouping.
+            // 3. Removed previous 'disabled' logic for applyMarkupCheckbox.
+            optionContainer.innerHTML = `
+                <div class="label-container" style="width: 180px; flex-shrink: 0; margin-right: 15px;">
+                    <input type="text" class="temp-option-name" placeholder="Name" value="${tempOption.name || ''}"
+                        style="width: 100%; font-weight: bold; margin-bottom: 5px; box-sizing: border-box;">
+                    <textarea class="temp-option-description" placeholder="Description (optional)" rows="1"
+                        style="width: 100%; font-size: 0.8em; min-height: 18px; box-sizing: border-box; resize: vertical;">${tempOption.description || ''}</textarea>
+                </div>
+
+                <div class="value-container" style="display: flex; align-items: center; max-width: 200px; margin-right: 15px; flex-shrink: 0;">
+                    <select class="temp-option-type" style="width: 70px; margin-right: 5px; font-size: 0.9em;">
+                        <option value="Fixed" ${tempOption.type === 'Fixed' ? 'selected' : ''}>Fixed</option>
+                        <option value="Percent" ${tempOption.type === 'Percent' ? 'selected' : ''}>Percent</option>
+                    </select>
+                    <input type="number" class="temp-option-value" placeholder="Value" value="${tempOption.value || 0}"
+                        min="${tempOption.type === 'Percent' ? '-100' : ''}" step="any"
+                        style="width: 80px; text-align: right;">
+                    <span class="value-type-indicator" style="margin-left: 5px; font-weight: bold;">${tempOption.type === 'Percent' ? '%' : '$'}</span>
+                </div>
+
+                <div style="display: flex; flex-direction: column; justify-content: center; margin-right: 15px; flex-shrink: 0; min-width: 120px;">
+                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                        <input type="checkbox" class="temp-option-apply-markup" id="temp-option-apply-markup-${tempOption.id}" ${tempOption.applyMarkup ? 'checked' : ''}
+                            style="transform: scale(1.1); margin-right: 5px; flex-shrink: 0;">
+                        <label for="temp-option-apply-markup-${tempOption.id}"
+                            style="font-weight: normal; margin-bottom: 0; padding-top: 0; display: inline; font-size: 0.9em; flex-grow: 1;"
+                            title="If checked, the markup percentage will be applied to this adjustment's value.">Apply Markup?</label>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                        <input type="checkbox" class="temp-option-is-optional" id="temp-option-is-optional-${tempOption.id}" ${tempOption.isOptional ? 'checked' : ''}
+                            style="transform: scale(1.1); margin-right: 5px; flex-shrink: 0;">
+                        <label for="temp-option-is-optional-${tempOption.id}"
+                            style="font-weight: normal; margin-bottom: 0; padding-top: 0; display: inline; font-size: 0.9em; flex-grow: 1;"
+                            title="If checked, this item will be listed as an Optional Addition and not included in the main total.">Make Optional?</label>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <input type="checkbox" class="temp-option-show-on-quote" id="temp-option-show-on-quote-${tempOption.id}" ${tempOption.showOnQuote ? 'checked' : ''}
+                            style="transform: scale(1.1); margin-right: 5px; flex-shrink: 0;">
+                        <label for="temp-option-show-on-quote-${tempOption.id}"
+                            style="font-weight: normal; margin-bottom: 0; padding-top: 0; display: inline; font-size: 0.9em; flex-grow: 1;"
+                            title="If checked, this item will be displayed on the customer proposal PDF.">Show on Quote?</label>
+                    </div>
+                </div>
+
+                <div style="margin-left: auto; padding-top: 5px; flex-shrink: 0;">
+                    <button class="delete-button delete-temp-option-button" style="padding: 2px 5px; font-size: 0.85em;">Del</button>
+                </div>
+            `;
+            dashboardTempOptionsDiv.appendChild(optionContainer);
+
+            // Get references and attach event listeners
+            const nameInput = optionContainer.querySelector('.temp-option-name');
+            const descInput = optionContainer.querySelector('.temp-option-description');
+            const typeSelect = optionContainer.querySelector('.temp-option-type');
+            const valueInput = optionContainer.querySelector('.temp-option-value');
+            const typeIndicator = optionContainer.querySelector('.value-type-indicator');
+            const applyMarkupCheckbox = optionContainer.querySelector('.temp-option-apply-markup');
+            const isOptionalCheckbox = optionContainer.querySelector('.temp-option-is-optional');
+            const showOnQuoteCheckbox = optionContainer.querySelector('.temp-option-show-on-quote'); // NEW: Show on Quote checkbox reference
+            const deleteButton = optionContainer.querySelector('.delete-temp-option-button');
+
+            // Store the original value to apply markup calculations
+            let originalValueForMarkup = parseFloat(tempOption.value) || 0;
+            // Store the current display value of the input for comparison
+            let currentDisplayValue = originalValueForMarkup;
+
+
+            const updateTempOptionDisplay = (eventSource = null) => {
+                const markupRate = (parseFloat(currentMarkup) || 0) / 100; // Get current global markup rate
+
+                // Update Type Indicator
+                typeIndicator.textContent = typeSelect.value === 'Percent' ? '%' : '$';
+                valueInput.min = typeSelect.value === 'Percent' ? '-100' : 'any';
+
+                // If the value input itself was changed, update originalValueForMarkup
+                if (eventSource === valueInput) {
+                    originalValueForMarkup = parseFloat(valueInput.value) || 0;
+                }
+
+                let newValueToDisplay = originalValueForMarkup;
+                if (typeSelect.value === 'Fixed' && applyMarkupCheckbox.checked) {
+                    newValueToDisplay = originalValueForMarkup * (1 + markupRate);
+                }
+                // Update the input field's value display
+                // Only update if the value is different to prevent cursor jump issues
+                if (parseFloat(valueInput.value) !== parseFloat(newValueToDisplay.toFixed(2))) { // Use toFixed(2) for comparison
+                    valueInput.value = newValueToDisplay.toFixed(2);
+                }
+
+                updateRunningTotals(); // Recalculate when anything changes
+                saveDashboardStateToSession(); // Save state
+            };
+
+            // Event Listeners:
+            // Input changes directly update originalValueForMarkup and then trigger display update
+            nameInput.addEventListener('input', () => updateTempOptionDisplay(nameInput));
+            descInput.addEventListener('input', () => updateTempOptionDisplay(descInput));
+            typeSelect.addEventListener('change', () => updateTempOptionDisplay(typeSelect));
+            valueInput.addEventListener('input', () => updateTempOptionDisplay(valueInput)); // Pass valueInput as eventSource
+            applyMarkupCheckbox.addEventListener('change', () => updateTempOptionDisplay(applyMarkupCheckbox)); // Pass checkbox as eventSource
+            isOptionalCheckbox.addEventListener('change', () => updateTempOptionDisplay(isOptionalCheckbox));
+            showOnQuoteCheckbox.addEventListener('change', () => saveDashboardStateToSession()); // Show on Quote only needs to save state
+
+            deleteButton.addEventListener('click', () => {
+                if (confirm('Are you sure you want to remove this temporary adjustment?')) {
+                    optionContainer.remove();
+                    if (dashboardTempOptionsDiv.children.length === 0) {
+                        dashboardTempOptionsDiv.innerHTML = '<p><i>No temporary options added.</i></p>';
+                    }
+                    updateRunningTotals(); // Recalculate overall totals
+                    saveDashboardStateToSession(); // Save state after deletion
+                }
+            });
+
+            updateTempOptionDisplay(); // Initial calculation and display update on load/add
         }
         function generateScopeId() { return `scope_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`; }
 
@@ -3464,16 +3611,32 @@
         }
 
         function calculateOptionsAndFinalTotal(baseEstimate) {
-            let optionsAdjustment = 0;
-            const appliedAdjustmentsListForPdf = [];
+            let totalOptionsAdjustment = 0; // Sum of non-optional adjustments (including their markup)
+            let additionalMarkupAmount = 0; // Markup explicitly added to adjustments
 
-            if (!dashboardOptionsDiv || !Array.isArray(currentProposalOptions)) {
-                console.error("Dashboard options div or currentProposalOptions array missing for final total calc.");
-                return { optionsAdjustment: 0, grandTotal: baseEstimate.totalBeforeOptions, appliedOptionsList: [] };
+            // Lists to collect details for PDF display later
+            const appliedAdjustmentsListForPdf = []; // For non-optional adjustments that affect main total
+            const optionalAdditionsListForPdf = []; // For items explicitly marked optional (including markup if applied)
+
+            if (!dashboardOptionsDiv || !Array.isArray(currentProposalOptions) || !dashboardTempOptionsDiv) {
+                console.error("Missing elements for option/adjustment calculation.");
+                return {
+                    optionsAdjustment: 0,
+                    grandTotal: baseEstimate.totalBeforeOptions,
+                    appliedOptionsList: [],
+                    optionalAdditionsList: [],
+                    additionalMarkupAmount: 0,
+                    newSubtotal: baseEstimate.subtotal,
+                    newMarkupAmount: baseEstimate.markupAmount,
+                    newTotalBeforeOptions: baseEstimate.totalBeforeOptions
+                };
             }
 
-            const optionItems = dashboardOptionsDiv.querySelectorAll('.dashboard-option-item');
-            optionItems.forEach((item) => {
+            const markupRate = (parseFloat(currentMarkup) || 0) / 100;
+
+            // --- Process Permanent Proposal Options / Adjustments ---
+            const permanentOptionItems = dashboardOptionsDiv.querySelectorAll('.dashboard-option-item[data-option-id]');
+            permanentOptionItems.forEach((item) => {
                 const toggleCheckbox = item.querySelector('.option-toggle-checkbox');
                 const valueInput = item.querySelector('.option-dashboard-value');
                 const optionId = item.getAttribute('data-option-id');
@@ -3482,75 +3645,262 @@
 
                 if (toggleCheckbox?.checked && valueInput && optionId) {
                     const isOptional = isOptionalCheckbox?.checked ?? false;
-                    if (!isOptional) {
-                        const optionDef = currentProposalOptions.find(opt => opt.id === optionId);
-                        if (optionDef) {
-                            const value = parseFloat(valueInput.value) || 0;
-                            let adjustmentAmount = 0;
-                            if (optionDef.type === 'Percent') {
-                                adjustmentAmount = baseEstimate.totalBeforeOptions * (value / 100);
-                            } else {
-                                adjustmentAmount = value;
+                    const optionDef = currentProposalOptions.find(opt => opt.id === optionId);
+
+                    if (optionDef) {
+                        let adjustmentValue = parseFloat(valueInput.value) || 0;
+                        let finalAmountForThisAdjustment = adjustmentValue; // Start with base value
+
+                        if (optionDef.type === 'Percent') {
+                            // Permanent percent adjustments apply to the baseEstimate.totalBeforeOptions
+                            // (which is the current sum of items + their markup)
+                            finalAmountForThisAdjustment = baseEstimate.totalBeforeOptions * (adjustmentValue / 100);
+                        }
+
+                        if (isOptional) { // Permanent Optional item
+                            if (dashboardShowCheckbox?.checked) { // Only add to PDF list if also marked to show
+                                optionalAdditionsListForPdf.push({
+                                    name: optionDef.name || 'Unnamed Optional',
+                                    description: optionDef.description || '',
+                                    amount: finalAmountForThisAdjustment,
+                                    type: optionDef.type, // Keep type for PDF display clarity
+                                    isOptional: true,
+                                    isTemp: false,
+                                    showOnQuote: true // Implicitly true if added to this list
+                                });
                             }
-                            optionsAdjustment += adjustmentAmount;
+                        } else { // Permanent Standard Adjustment (not optional, applied AFTER markup)
+                            totalOptionsAdjustment += finalAmountForThisAdjustment;
                             if (dashboardShowCheckbox?.checked) {
                                 appliedAdjustmentsListForPdf.push({
                                     name: optionDef.name || 'Unnamed Adjustment',
                                     description: optionDef.description || '',
-                                    amount: adjustmentAmount
+                                    amount: finalAmountForThisAdjustment,
+                                    type: optionDef.type,
+                                    isOptional: false,
+                                    isTemp: false,
+                                    showOnQuote: true // Implicitly true if added to this list
                                 });
                             }
-                        } else { console.warn(`Definition not found for selected adjustment ID: ${optionId}`); }
+                        }
+                    } else {
+                        console.warn(`Definition not found for permanent selected adjustment ID: ${optionId}`);
                     }
                 }
             });
 
-            const grandTotal = baseEstimate.totalBeforeOptions + optionsAdjustment;
-            return { optionsAdjustment: optionsAdjustment, grandTotal: grandTotal, appliedOptionsList: appliedAdjustmentsListForPdf };
+            // --- Process Temporary Proposal Options / Adjustments ---
+            const tempOptionItems = dashboardTempOptionsDiv.querySelectorAll('.dashboard-option-item[data-temp-option-id]');
+            tempOptionItems.forEach(container => {
+                const nameInput = container.querySelector('.temp-option-name');
+                const descInput = container.querySelector('.temp-option-description');
+                const typeSelect = container.querySelector('.temp-option-type');
+                const valueInput = container.querySelector('.temp-option-value'); // This now contains the *displayed* value (potentially marked up)
+                const applyMarkupCheckbox = container.querySelector('.temp-option-apply-markup');
+                const isOptionalCheckbox = container.querySelector('.temp-option-is-optional');
+                const showOnQuoteCheckbox = container.querySelector('.temp-option-show-on-quote'); // NEW: Show on Quote checkbox
+
+                const name = nameInput?.value.trim() || 'Unnamed Temp Adjustment';
+                const description = descInput?.value.trim() || '';
+                const type = typeSelect?.value || 'Fixed';
+                const displayedValue = parseFloat(valueInput?.value) || 0; // Get the displayed value
+                const applyMarkup = applyMarkupCheckbox?.checked ?? false;
+                const isOptional = isOptionalCheckbox?.checked ?? false;
+                const showOnQuote = showOnQuoteCheckbox?.checked ?? true; // Default to true
+
+                // Calculate the original base value of the adjustment (before any markup was applied to it)
+                let baseValueForCalc = displayedValue;
+                if (type === 'Fixed' && applyMarkup && markupRate > 0) {
+                    baseValueForCalc = displayedValue / (1 + markupRate);
+                }
+
+                let finalAmountForThisAdjustment = baseValueForCalc; // This is the base value of the adjustment itself
+                let markupOnThisAdjustment = 0; // Markup calculated on *this specific adjustment*
+
+                if (type === 'Percent') {
+                    // For temporary percentage adjustments, they apply to the *base estimate's total before options*
+                    // which is (items + markup on items). This ensures percentages are calculated on a consistent base.
+                    finalAmountForThisAdjustment = baseEstimate.totalBeforeOptions * (baseValueForCalc / 100);
+                }
+
+                // If it applies markup, calculate that specific markup amount
+                if (applyMarkup) {
+                    // Markup is calculated on the base value of this adjustment (finalAmountForThisAdjustment)
+                    markupOnThisAdjustment = finalAmountForThisAdjustment * markupRate;
+                    additionalMarkupAmount += markupOnThisAdjustment; // Accumulate this markup to the overall additional markup
+                }
+
+                if (isOptional) { // Temporary Optional item
+                    if (showOnQuote) { // Only add to PDF list if also marked to show
+                        optionalAdditionsListForPdf.push({
+                            name: name,
+                            description: description,
+                            amount: finalAmountForThisAdjustment + markupOnThisAdjustment, // Include its own markup in optional amount
+                            type: type,
+                            isOptional: true,
+                            isTemp: true,
+                            showOnQuote: showOnQuote
+                        });
+                    }
+                } else { // Temporary Standard Adjustment (not optional)
+                    // Add the base value of this adjustment AND its calculated markup to totalOptionsAdjustment
+                    totalOptionsAdjustment += finalAmountForThisAdjustment;
+                    // Note: We are no longer adding `additionalMarkupAmount` to `totalOptionsAdjustment` directly here.
+                    // The `markupOnThisAdjustment` *is* the additional markup for THIS item, which we add here.
+                    totalOptionsAdjustment += markupOnThisAdjustment;
+
+                    if (showOnQuote) { // Only add to PDF list if also marked to show
+                        appliedAdjustmentsListForPdf.push({
+                            name: name,
+                            description: description,
+                            amount: finalAmountForThisAdjustment + markupOnThisAdjustment, // Total amount including its own markup
+                            type: type,
+                            isOptional: false,
+                            isTemp: true,
+                            appliesMarkup: applyMarkup, // Flag for PDF clarity
+                            showOnQuote: showOnQuote
+                        });
+                    }
+                }
+            });
+
+            // --- Final Calculation ---
+            // The grand total now includes:
+            // 1. The base estimate's total before options (items + markup on items)
+            // 2. Any additional markup calculated on temporary adjustments (`additionalMarkupAmount`)
+            // 3. The total of all non-optional adjustments (`totalOptionsAdjustment`), which now
+            //    already includes their own markup.
+            const grandTotal = baseEstimate.totalBeforeOptions + totalOptionsAdjustment; // `additionalMarkupAmount` is already part of `totalOptionsAdjustment`
+
+            return {
+                optionsAdjustment: totalOptionsAdjustment, // This now correctly represents all post-markup adjustments
+                grandTotal: grandTotal,
+                appliedOptionsList: appliedAdjustmentsListForPdf, // List of non-optional adjustments for PDF
+                optionalAdditionsList: optionalAdditionsListForPdf, // List of optional items for PDF
+                additionalMarkupAmount: additionalMarkupAmount, // Sum of all markup specifically from temporary adjustments
+                // Pass new totals based on the *final* markup amount for the display/PDFs
+                newSubtotal: baseEstimate.subtotal, // This remains fixed for items
+                newMarkupAmount: baseEstimate.markupAmount + additionalMarkupAmount, // Items markup + adjustments markup
+                newTotalBeforeOptions: baseEstimate.totalBeforeOptions + additionalMarkupAmount // Base total before options that DON'T get markup
+            };
         }
 
+        // --- Update getSelectedOptionalAdditionsData to use new showOnQuote and include temporary options' markup ---
+        // This function should consolidate ALL optional items (permanent and temporary) that are
+        // intended to be displayed in the "Optional Additions" section.
         function getSelectedOptionalAdditionsData() {
             const selectedOptionals = [];
-            if (!dashboardOptionsDiv || !Array.isArray(currentProposalOptions)) {
-                console.error("Dashboard options div or currentProposalOptions array missing for optional additions.");
+            if (!dashboardOptionsDiv || !Array.isArray(currentProposalOptions) || !dashboardTempOptionsDiv) {
+                console.error("Missing elements for optional additions data gathering.");
                 return selectedOptionals;
             }
 
-            const optionItems = dashboardOptionsDiv.querySelectorAll('.dashboard-option-item');
-            optionItems.forEach((item) => {
+            // Get the current grand total from a fresh calculation to use for percentage optionals
+            const baseEstimate = calculateBaseEstimate();
+            const calculationResults = calculateOptionsAndFinalTotal(baseEstimate);
+            const currentGrandTotal = calculationResults.grandTotal;
+            const markupRate = (parseFloat(currentMarkup) || 0) / 100;
+
+            // Process permanent optional additions
+            const permanentOptionItems = dashboardOptionsDiv.querySelectorAll('.dashboard-option-item[data-option-id]');
+            permanentOptionItems.forEach((item) => {
                 const toggleCheckbox = item.querySelector('.option-toggle-checkbox');
                 const isOptionalCheckbox = item.querySelector('.option-dashboard-is-optional');
                 const valueInput = item.querySelector('.option-dashboard-value');
                 const optionId = item.getAttribute('data-option-id');
                 const showOnQuoteCheckbox = item.querySelector('.option-dashboard-show-toggle');
 
-                if (toggleCheckbox?.checked && isOptionalCheckbox?.checked && valueInput && optionId) {
+                if (toggleCheckbox?.checked && isOptionalCheckbox?.checked && valueInput && optionId && (showOnQuoteCheckbox?.checked ?? false)) { // Only if selected and shown
                     const optionDef = currentProposalOptions.find(opt => opt.id === optionId);
                     if (optionDef) {
-                        const value = parseFloat(valueInput.value) || 0;
-                        const amount = value;
+                        let amount = parseFloat(valueInput.value) || 0;
+                        if (optionDef.type === 'Percent') {
+                            amount = currentGrandTotal * (amount / 100);
+                        }
                         selectedOptionals.push({
                             id: optionDef.id,
                             name: optionDef.name || 'Unnamed Optional',
                             description: optionDef.description || '',
                             amount: amount,
-                            showOnQuote: showOnQuoteCheckbox?.checked ?? false
+                            type: optionDef.type,
+                            showOnQuote: true, // Already filtered by this
+                            isOptional: true,
+                            isTemp: false
                         });
-                    } else { console.warn(`Definition not found for selected optional option ID: ${optionId}`); }
+                    } else { console.warn(`Definition not found for permanent optional option ID: ${optionId}`); }
+                }
+            });
+
+            // Process temporary options explicitly marked as "Make Optional?"
+            const tempOptionItems = dashboardTempOptionsDiv.querySelectorAll('.dashboard-option-item[data-temp-option-id]');
+            tempOptionItems.forEach(container => {
+                const nameInput = container.querySelector('.temp-option-name');
+                const descInput = container.querySelector('.temp-option-description');
+                const typeSelect = container.querySelector('.temp-option-type');
+                const valueInput = container.querySelector('.temp-option-value');
+                const isOptionalCheckbox = container.querySelector('.temp-option-is-optional');
+                const showOnQuoteCheckbox = container.querySelector('.temp-option-show-on-quote'); // NEW: Show on Quote checkbox
+                const applyMarkupCheckbox = container.querySelector('.temp-option-apply-markup');
+
+
+                const name = nameInput?.value.trim() || 'Unnamed Temp Optional';
+                const description = descInput?.value.trim() || '';
+                const type = typeSelect?.value || 'Fixed';
+                const displayedValue = parseFloat(valueInput?.value) || 0;
+                const isOptional = isOptionalCheckbox?.checked ?? false;
+                const showOnQuote = showOnQuoteCheckbox?.checked ?? true;
+                const applyMarkup = applyMarkupCheckbox?.checked ?? false;
+
+
+                // Only include if it's explicitly marked optional AND shown on quote AND has a non-zero value
+                if (isOptional && showOnQuote && displayedValue !== 0) {
+                    let baseValueForCalc = displayedValue;
+                    if (type === 'Fixed' && applyMarkup && markupRate > 0) {
+                        baseValueForCalc = displayedValue / (1 + markupRate); // Reverse calc to get original cost for markup
+                    }
+
+                    let amount = baseValueForCalc;
+                    if (type === 'Percent') {
+                        amount = currentGrandTotal * (baseValueForCalc / 100); // Apply percentage to the current grand total
+                    }
+
+                    // If markup was applied to this optional, add that markup amount to its display
+                    let markupOnThisOptional = 0;
+                    if (applyMarkup) {
+                        markupOnThisOptional = amount * markupRate;
+                    }
+
+                    selectedOptionals.push({
+                        id: container.getAttribute('data-temp-option-id'),
+                        name: name,
+                        description: description,
+                        amount: amount + markupOnThisOptional, // Include its own markup in optional amount
+                        type: type,
+                        showOnQuote: showOnQuote,
+                        isOptional: true,
+                        isTemp: true,
+                        appliesMarkup: applyMarkup // For internal PDF clarity
+                    });
                 }
             });
             return selectedOptionals;
         }
 
-        function _getAllSelectedOptionsDataForInternal(baseEstimate) {
+        // --- Refactor _getAllSelectedOptionsDataForInternal to handle markup and optional flags for internal PDF ---
+        // This function needs to return ALL selected options, correctly categorizing and calculating their amounts.
+        // It will now receive the *final* grand total to calculate percentage options against.
+        function _getAllSelectedOptionsDataForInternal(finalGrandTotal, baseEstimate) { // Pass finalGrandTotal and baseEstimate
             const allSelectedItems = [];
-            if (!dashboardOptionsDiv || !Array.isArray(currentProposalOptions)) {
-                console.error("Dashboard options div or currentProposalOptions array missing for internal PDF data gathering.");
+            if (!dashboardOptionsDiv || !Array.isArray(currentProposalOptions) || !dashboardTempOptionsDiv) {
+                console.error("Missing elements for internal PDF option data gathering.");
                 return allSelectedItems;
             }
 
-            const optionItems = dashboardOptionsDiv.querySelectorAll('.dashboard-option-item');
-            optionItems.forEach((item) => {
+            const markupRate = (parseFloat(baseEstimate.markupPercent) || 0) / 100;
+
+            // --- Process Permanent Proposal Options ---
+            const permanentOptionItems = dashboardOptionsDiv.querySelectorAll('.dashboard-option-item[data-option-id]');
+            permanentOptionItems.forEach((item) => {
                 const toggleCheckbox = item.querySelector('.option-toggle-checkbox');
                 const valueInput = item.querySelector('.option-dashboard-value');
                 const optionId = item.getAttribute('data-option-id');
@@ -3561,53 +3911,114 @@
                     if (optionDef) {
                         const value = parseFloat(valueInput.value) || 0;
                         const isOptional = isOptionalCheckbox?.checked ?? false;
-                        let calculatedAmount = 0;
+                        let calculatedAmount = value; // Default to fixed value
 
-                        if (!isOptional) {
-                            if (optionDef.type === 'Percent') { calculatedAmount = baseEstimate.totalBeforeOptions * (value / 100); }
-                            else { calculatedAmount = value; }
-                        } else {
-                            calculatedAmount = value;
+                        if (optionDef.type === 'Percent') {
+                            // Permanent % adjustments (both optional and non-optional) apply to the finalGrandTotal
+                            calculatedAmount = finalGrandTotal * (value / 100);
                         }
+
                         allSelectedItems.push({
                             name: optionDef.name || 'Unnamed Item',
                             description: optionDef.description || '',
                             amount: calculatedAmount,
-                            isOptional: isOptional
+                            isOptional: isOptional,
+                            isTemp: false,
+                            appliesMarkup: false // Permanent options don't have this flag
                         });
                     } else {
-                        console.warn(`(Internal PDF) Definition NOT FOUND for selected option ID: ${optionId}`);
+                        console.warn(`(Internal PDF) Definition NOT FOUND for permanent selected option ID: ${optionId}`);
                     }
+                }
+            });
+
+            // --- Process Temporary Proposal Options / Adjustments ---
+            const tempOptionItems = dashboardTempOptionsDiv.querySelectorAll('.dashboard-option-item[data-temp-option-id]');
+            tempOptionItems.forEach(container => {
+                const nameInput = container.querySelector('.temp-option-name');
+                const descInput = container.querySelector('.temp-option-description');
+                const typeSelect = container.querySelector('.temp-option-type');
+                const valueInput = container.querySelector('.temp-option-value'); // This is the displayed value
+                const applyMarkupCheckbox = container.querySelector('.temp-option-apply-markup');
+                const isOptionalCheckbox = container.querySelector('.temp-option-is-optional');
+                const showOnQuoteCheckbox = container.querySelector('.temp-option-show-on-quote');
+
+                const name = nameInput?.value.trim() || 'Unnamed Temp Adjustment';
+                const description = descInput?.value.trim() || '';
+                const type = typeSelect?.value || 'Fixed';
+                const displayedValue = parseFloat(valueInput?.value) || 0;
+                const applyMarkup = applyMarkupCheckbox?.checked ?? false;
+                const isOptional = isOptionalCheckbox?.checked ?? false;
+                const showOnQuote = showOnQuoteCheckbox?.checked ?? true; // Default to true
+
+                if (displayedValue !== 0) {
+                    let baseValueForCalc = displayedValue;
+                    if (type === 'Fixed' && applyMarkup && markupRate > 0) {
+                        // Reverse calculate to get the original base amount for displaying the components
+                        baseValueForCalc = displayedValue / (1 + markupRate);
+                    }
+
+                    let amount = baseValueForCalc;
+                    if (type === 'Percent') {
+                        // Temporary percentage options apply to the finalGrandTotal for internal clarity
+                        amount = finalGrandTotal * (baseValueForCalc / 100);
+                    }
+
+                    // For Internal PDF, we want to show the full amount including markup if applicable
+                    let totalAmountForDisplay = amount;
+                    if (applyMarkup) {
+                        totalAmountForDisplay += (amount * markupRate);
+                    }
+
+                    allSelectedItems.push({
+                        name: name,
+                        description: description,
+                        amount: totalAmountForDisplay,
+                        isOptional: isOptional,
+                        isTemp: true,
+                        appliesMarkup: applyMarkup, // Indicate on internal PDF
+                        showOnQuote: showOnQuote // For internal PDF clarity
+                    });
                 }
             });
             return allSelectedItems;
         }
 
-
+        // --- Update updateRunningTotals to use new calculation results ---
         function updateRunningTotals() {
+            // First calculate the base estimate (only cost items)
             const baseEstimate = calculateBaseEstimate();
-            const finalTotals = calculateOptionsAndFinalTotal(baseEstimate);
+
+            // Then calculate all options and adjustments
+            const calculationResults = calculateOptionsAndFinalTotal(baseEstimate);
+
+            // Fetch optional additions list separately for display
             const selectedOptionals = getSelectedOptionalAdditionsData();
             const sqft = parseFloat(jobAreaInput?.value) || 0;
 
-            if (runningSubtotalEl) runningSubtotalEl.textContent = formatCurrency(baseEstimate.subtotal);
+            // Update main display using values from calculationResults
+            if (runningSubtotalEl) runningSubtotalEl.textContent = formatCurrency(calculationResults.newSubtotal); // Use newSubtotal (base items cost)
             if (runningMarkupPercentEl) runningMarkupPercentEl.textContent = parseFloat(baseEstimate.markupPercent || 0).toFixed(1);
-            if (runningMarkupAmountEl) runningMarkupAmountEl.textContent = formatCurrency(baseEstimate.markupAmount);
-            if (runningTotalBeforeOptionsEl) runningTotalBeforeOptionsEl.textContent = formatCurrency(baseEstimate.totalBeforeOptions);
-            if (runningOptionsAdjustmentEl) runningOptionsAdjustmentEl.textContent = formatCurrency(finalTotals.optionsAdjustment);
-            if (runningGrandTotalEl) runningGrandTotalEl.textContent = formatCurrency(finalTotals.grandTotal);
+            if (runningMarkupAmountEl) runningMarkupAmountEl.textContent = formatCurrency(calculationResults.newMarkupAmount); // Use newMarkupAmount (items markup + adjustment markup)
+            if (runningTotalBeforeOptionsEl) runningTotalBeforeOptionsEl.textContent = formatCurrency(calculationResults.newTotalBeforeOptions); // Base + total markup
+            if (runningOptionsAdjustmentEl) runningOptionsAdjustmentEl.textContent = formatCurrency(calculationResults.optionsAdjustment); // This is total of all adjustments (including their markup)
+            if (runningGrandTotalEl) runningGrandTotalEl.textContent = formatCurrency(calculationResults.grandTotal);
 
-            const franchiseFee = finalTotals.grandTotal * 0.08;
-            const profitAfterFee = baseEstimate.markupAmount - franchiseFee;
-            const pricePerSqft = sqft > 0 ? finalTotals.grandTotal / sqft : 0;
+            const franchiseFee = calculationResults.grandTotal * 0.08;
+            // Profit After Fee now based on the NEW total markup amount
+            const profitAfterFee = calculationResults.newMarkupAmount - franchiseFee;
+            const pricePerSqft = sqft > 0 ? calculationResults.grandTotal / sqft : 0;
             if (runningFranchiseFeeEl) runningFranchiseFeeEl.textContent = formatCurrency(franchiseFee);
             if (runningProfitAfterFeeEl) runningProfitAfterFeeEl.textContent = formatCurrency(profitAfterFee);
             if (runningPricePerSqftEl) runningPricePerSqftEl.textContent = formatCurrency(pricePerSqft);
 
+            // Update optional additions display
             if (dashboardOptionalItemsListDiv) {
                 dashboardOptionalItemsListDiv.innerHTML = '';
-                if (selectedOptionals.length > 0) {
-                    selectedOptionals.forEach(opt => {
+                // Only show optional additions that are actually marked to be shown on the quote (showOnQuote: true)
+                const finalOptionalsForDisplay = selectedOptionals.filter(opt => opt.showOnQuote);
+                if (finalOptionalsForDisplay.length > 0) {
+                    finalOptionalsForDisplay.forEach(opt => {
                         const itemDiv = document.createElement('div');
                         itemDiv.style.display = 'flex'; itemDiv.style.justifyContent = 'space-between'; itemDiv.style.marginBottom = '5px'; itemDiv.style.fontSize = '1em';
                         const nameSpan = document.createElement('span'); nameSpan.textContent = opt.name; nameSpan.style.marginRight = '10px';
@@ -3620,7 +4031,6 @@
                 }
             } else { console.warn("Dashboard optional items list div not found for update."); }
         }
-
 
         function clearQuantities() {
             if (!dashboardItemsDiv) { return; }
@@ -3677,6 +4087,22 @@
                     });
                 });
                 console.log("[Session Save] Temporary items read from DOM:", tempItems);
+                // NEW: Gather temporary proposal options/adjustments
+                const tempOptions = [];
+                dashboardTempOptionsDiv?.querySelectorAll('.dashboard-option-item[data-temp-option-id]').forEach(container => {
+                    tempOptions.push({
+                        id: container.getAttribute('data-temp-option-id'),
+                        name: container.querySelector('.temp-option-name')?.value || '',
+                        description: container.querySelector('.temp-option-description')?.value || '',
+                        type: container.querySelector('.temp-option-type')?.value || 'Fixed',
+                        // Store the original base value for markup calculation logic, not the displayed value
+                        value: parseFloat(container.querySelector('.temp-option-value')?.value) / ((container.querySelector('.temp-option-apply-markup')?.checked && container.querySelector('.temp-option-type')?.value === 'Fixed') ? (1 + (parseFloat(currentMarkup) || 0) / 100) : 1) || 0,
+                        applyMarkup: container.querySelector('.temp-option-apply-markup')?.checked ?? false,
+                        isOptional: container.querySelector('.temp-option-is-optional')?.checked ?? false,
+                        showOnQuote: container.querySelector('.temp-option-show-on-quote')?.checked ?? true // NEW: save showOnQuote
+                    });
+                });
+                console.log("[Session Save] Temporary proposal options read from DOM:", tempOptions);
 
                 const optionStates = {};
                 dashboardOptionsDiv?.querySelectorAll('.dashboard-option-item').forEach(item => {
@@ -3716,7 +4142,8 @@
                     scratchpad: scratchpadValue,
                     quantities: quantities,
                     options: optionStates,
-                    tempItems: tempItems // NEW: Add temporary items
+                    tempItems: tempItems, // NEW: Add temporary items
+                    tempOptions: tempOptions // NEW: Add temporary options
                 };
                 console.log("[Session Save] dashboardState object prepared for saving:", dashboardState);
 
@@ -3780,6 +4207,16 @@
                     }
                 } else { console.warn("[Session Restore] dashboardTempItemsDiv not found!"); }
 
+                // NEW: Restore temporary proposal options/adjustments
+                if (dashboardTempOptionsDiv) {
+                    dashboardTempOptionsDiv.innerHTML = ''; // Clear initial message
+                    if (Array.isArray(savedState.tempOptions) && savedState.tempOptions.length > 0) {
+                        console.log("[Session Restore] Restoring temporary options:", savedState.tempOptions);
+                        savedState.tempOptions.forEach(tempOption => addTempOptionToDashboard(tempOption));
+                    } else {
+                        dashboardTempOptionsDiv.innerHTML = '<p><i>No temporary options added.</i></p>';
+                    }
+                } else { console.warn("[Session Restore] dashboardTempOptionsDiv not found!"); }
 
                 // Restore option states
                 const optionItems = dashboardOptionsDiv?.querySelectorAll('.dashboard-option-item');
@@ -3815,6 +4252,9 @@
                 // Also clear temp items display on restore error
                 if (dashboardTempItemsDiv) {
                     dashboardTempItemsDiv.innerHTML = '<p><i>No temporary items added.</i></p>';
+                }
+                if (dashboardTempOptionsDiv) { // NEW: Clear temp options on error
+                    dashboardTempOptionsDiv.innerHTML = '<p><i>No temporary options added.</i></p>';
                 }
                 updateRunningTotals();
                 updateConcreteCalculatorDisplay();
@@ -4858,8 +5298,8 @@
 
             // --- Data Calculation ---
             const baseEstimate = calculateBaseEstimate();
-            const finalTotals = calculateOptionsAndFinalTotal(baseEstimate);
-            const allSelectedOptionsForInternalList = _getAllSelectedOptionsDataForInternal(baseEstimate);
+            const calculationResults = calculateOptionsAndFinalTotal(baseEstimate); // Get comprehensive calculation results
+            const allSelectedOptionsForInternalList = _getAllSelectedOptionsDataForInternal(calculationResults.grandTotal, baseEstimate); // Pass final total and base estimate
             const scratchpadNotes = dashboardScratchpad?.value.trim() || '';
 
             // Gather line items with quantities > 0
@@ -4908,7 +5348,7 @@
                 }
             });
 
-            // NEW: Add TEMPORARY items
+            // Add TEMPORARY cost items
             const tempItemContainers = dashboardTempItemsDiv ? dashboardTempItemsDiv.querySelectorAll('.dashboard-item-container[data-temp-item-id]') : [];
             tempItemContainers.forEach(container => {
                 const quantityInput = container.querySelector('.temp-item-quantity');
@@ -4926,11 +5366,11 @@
                     estimateItems.push({
                         name: name,
                         description: description,
-                        unit: 'each', // Temporary items are assumed to be "each" or custom unit
+                        unit: 'each',
                         quantity: quantity,
                         cost: cost,
                         total: itemTotal,
-                        pricingType: 'Fixed' // Temporary items are always fixed cost per unit
+                        pricingType: 'Fixed'
                     });
                 }
             });
@@ -4943,20 +5383,24 @@
                     const docType = 'Internal'; // Define docType for helpers
 
                     // --- PDF Drawing ---
-                    currentY = _drawPdfHeader(doc, currentY, true, false, 1); // Draw header (no date), page 1
-                    doc.setFontSize(10); doc.setFont(undefined, 'bold'); doc.text(`INTERNAL ESTIMATE DETAIL`, 14, currentY); doc.setFont(undefined, 'normal'); currentY += 10; // Title
-                    currentY = _drawPdfJobInfo(doc, currentY, docType); // Job/Client Info (includes dims for internal)
-                    currentY = _drawPdfItemsTableInternal(doc, currentY, estimateItems); // Items Table
-                    // Draw Totals section, passing the COMPREHENSIVE list for display
-                    currentY = _drawPdfTotalsInternal(doc, currentY, baseEstimate, finalTotals, allSelectedOptionsForInternalList);
-                    currentY = _drawPdfScratchpadNotes(doc, currentY); // Add scratchpad notes
-                    currentY = _drawPdfProfitMetrics(doc, currentY, baseEstimate, finalTotals); // Profit metrics
-                    _addFootersToAllPages(doc, 'Internal Estimate'); // Add footers (page numbers only)
+                    currentY = _drawPdfHeader(doc, currentY, true, false, 1);
+                    doc.setFontSize(10);
+                    doc.setFont(undefined, 'bold');
+                    doc.text(`INTERNAL ESTIMATE DETAIL`, 14, currentY);
+                    doc.setFont(undefined, 'normal');
+                    currentY += 10;
+                    currentY = _drawPdfJobInfo(doc, currentY, docType);
+                    currentY = _drawPdfItemsTableInternal(doc, currentY, estimateItems);
+                    // Pass the full calculationResults object to _drawPdfTotalsInternal
+                    currentY = _drawPdfTotalsInternal(doc, currentY, baseEstimate, calculationResults, allSelectedOptionsForInternalList);
+                    currentY = _drawPdfScratchpadNotes(doc, currentY);
+                    currentY = _drawPdfProfitMetrics(doc, currentY, baseEstimate, calculationResults); // Pass calculationResults for final profit figures
+                    _addFootersToAllPages(doc, 'Internal Estimate');
 
                     // --- Save ---
                     const filename = generatePdfFilename(docType);
                     doc.save(filename);
-                    showFeedback(feedbackEl, `Internal PDF saved as ${filename}!`, 'green'); // Success feedback
+                    showFeedback(feedbackEl, `Internal PDF saved as ${filename}!`, 'green');
                 } catch (error) {
                     // --- Error Handling ---
                     console.error("Error generating Internal PDF:", error);
@@ -4964,7 +5408,7 @@
                     showFeedback(feedbackEl, `Error generating PDF: ${errorMsg}`, 'red');
                     alert(`Error generating Internal PDF:\n${errorMsg}`);
                 }
-            }, 100); // Small delay
+            }, 100);
         }
 
         function generateProposalPDF() {
@@ -4974,15 +5418,18 @@
 
             // --- Data Calculation ---
             const baseEstimate = calculateBaseEstimate();
-            const finalTotals = calculateOptionsAndFinalTotal(baseEstimate);
-            const selectedOptionals = getSelectedOptionalAdditionsData();
+            const calculationResults = calculateOptionsAndFinalTotal(baseEstimate); // Get comprehensive calculation results
+            const selectedOptionals = getSelectedOptionalAdditionsData(); // This function already filters by showOnQuote
             const scopeOfWork = scopeOfWorkInput?.value.trim() ?? '';
 
             // --- Validation ---
             clearValidationErrors(dashboardSection); // Clear previous errors
             if (!scopeOfWork) {
                 if (scopeOfWorkInput) scopeOfWorkInput.classList.add(INVALID_CLASS);
-                if (scopeOfWorkValidationError) { scopeOfWorkValidationError.textContent = "Scope of Work cannot be empty for proposal."; scopeOfWorkValidationError.style.display = 'inline'; }
+                if (scopeOfWorkValidationError) {
+                    scopeOfWorkValidationError.textContent = "Scope of Work cannot be empty for proposal.";
+                    scopeOfWorkValidationError.style.display = 'inline';
+                }
                 showFeedback(feedbackEl, "Scope of Work required for Proposal.", 'red', 5000);
                 if (scopeOfWorkInput) scopeOfWorkInput.focus();
                 return; // Stop generation
@@ -4995,26 +5442,26 @@
                     const docType = 'Proposal'; // Define docType for helpers
 
                     // --- PDF Drawing ---
-                    currentY = _drawPdfHeader(doc, currentY, true, true, 1); // Header with date, page 1
-                    currentY = _drawPdfProposalClientInfo(doc, currentY); // Client/Project Info
-                    currentY = _drawPdfScopeOfWork(doc, currentY, docType); // Scope
-                    // Draw selected & shown ADJUSTMENTS using the filtered list from finalTotals
-                    currentY = _drawPdfOptions(doc, currentY, finalTotals.appliedOptionsList, docType);
-                    // Draw the main total (Base + Markup + Adjustments)
-                    currentY = _drawPdfPriceProposal(doc, currentY, finalTotals.grandTotal);
+                    currentY = _drawPdfHeader(doc, currentY, true, true, 1);
+                    currentY = _drawPdfProposalClientInfo(doc, currentY);
+                    currentY = _drawPdfScopeOfWork(doc, currentY, docType);
+                    // Draw selected & shown ADJUSTMENTS using the list from calculationResults
+                    currentY = _drawPdfOptions(doc, currentY, calculationResults.appliedOptionsList, docType); // Use calculationResults.appliedOptionsList
+                    // Draw the main total
+                    currentY = _drawPdfPriceProposal(doc, currentY, calculationResults.grandTotal); // Use calculationResults.grandTotal
                     // Draw selected & shown OPTIONAL ADDITIONS using the filtered list from selectedOptionals
-                    currentY = _drawPdfOptionalAdditions(doc, currentY, selectedOptionals, docType);
+                    currentY = _drawPdfOptionalAdditions(doc, currentY, selectedOptionals, docType); // selectedOptionals is already filtered by showOnQuote
                     // Draw Notes/Terms in the main body flow
                     currentY = _drawPdfNotesAndTerms(doc, currentY, docType);
                     // Add Signature Lines (before the final footer)
                     currentY = _drawPdfSignatureLines(doc, currentY, docType);
 
-                    _addFootersToAllPages(doc, docType); // Add footers (page numbers only)
+                    _addFootersToAllPages(doc, docType);
 
                     // --- Save ---
                     const filename = generatePdfFilename(docType);
                     doc.save(filename);
-                    showFeedback(feedbackEl, `Proposal PDF saved as ${filename}!`, 'green'); // Success feedback
+                    showFeedback(feedbackEl, `Proposal PDF saved as ${filename}!`, 'green');
                 } catch (error) {
                     // --- Error Handling ---
                     console.error("Error generating Proposal PDF:", error);
@@ -5022,7 +5469,7 @@
                     showFeedback(feedbackEl, `Error generating PDF: ${errorMsg}`, 'red');
                     alert(`Error generating Proposal PDF:\n${errorMsg}`);
                 }
-            }, 100); // Small delay
+            }, 100);
         }
 
         function generateLetterheadPDF() {
@@ -5063,15 +5510,18 @@
 
             // --- Data Calculation ---
             const baseEstimate = calculateBaseEstimate();
-            const finalTotals = calculateOptionsAndFinalTotal(baseEstimate);
-            const selectedOptionals = getSelectedOptionalAdditionsData();
+            const calculationResults = calculateOptionsAndFinalTotal(baseEstimate); // Get comprehensive calculation results
+            const selectedOptionals = getSelectedOptionalAdditionsData(); // This function already filters by showOnQuote
             const scopeOfWork = scopeOfWorkInput?.value.trim() ?? '';
 
             // --- Validation ---
             clearValidationErrors(dashboardSection);
             if (!scopeOfWork) {
                 if (scopeOfWorkInput) scopeOfWorkInput.classList.add(INVALID_CLASS);
-                if (scopeOfWorkValidationError) { scopeOfWorkValidationError.textContent = "Scope of Work cannot be empty for Field Quote."; scopeOfWorkValidationError.style.display = 'inline'; }
+                if (scopeOfWorkValidationError) {
+                    scopeOfWorkValidationError.textContent = "Scope of Work cannot be empty for Field Quote.";
+                    scopeOfWorkValidationError.style.display = 'inline';
+                }
                 showFeedback(feedbackEl, "Scope of Work required for Field Quote.", 'red', 5000);
                 if (scopeOfWorkInput) scopeOfWorkInput.focus();
                 return;
@@ -5088,13 +5538,15 @@
                     // Add Date manually since header isn't drawn
                     const generationDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
                     doc.setFontSize(10);
-                    doc.text(`Date: ${generationDate}`, doc.internal.pageSize.getWidth() - 14, currentY - 10, { align: 'right' }); // Position near top-right of content area
+                    doc.text(`Date: ${generationDate}`, doc.internal.pageSize.getWidth() - 14, currentY - 10, {
+                        align: 'right'
+                    }); // Position near top-right of content area
 
-                    currentY = _drawPdfProposalClientInfo(doc, currentY); // Client/Project Info
-                    currentY = _drawPdfScopeOfWork(doc, currentY, docType); // Scope
-                    currentY = _drawPdfOptions(doc, currentY, finalTotals.appliedOptionsList, docType); // Adjustments
-                    currentY = _drawPdfPriceProposal(doc, currentY, finalTotals.grandTotal); // Total Price
-                    currentY = _drawPdfOptionalAdditions(doc, currentY, selectedOptionals, docType); // Optionals
+                    currentY = _drawPdfProposalClientInfo(doc, currentY);
+                    currentY = _drawPdfScopeOfWork(doc, currentY, docType);
+                    currentY = _drawPdfOptions(doc, currentY, calculationResults.appliedOptionsList, docType); // Use calculationResults.appliedOptionsList
+                    currentY = _drawPdfPriceProposal(doc, currentY, calculationResults.grandTotal); // Use calculationResults.grandTotal
+                    currentY = _drawPdfOptionalAdditions(doc, currentY, selectedOptionals, docType); // selectedOptionals is already filtered by showOnQuote
 
                     // NO Footer or Signature Lines for Field Quote
 
@@ -5267,6 +5719,7 @@
                 btnClearQuantities?.addEventListener('click', clearQuantities);
                 btnClearJobInfo?.addEventListener('click', clearJobInfo);
                 btnAddTempItem?.addEventListener('click', () => addTempItemToDashboard()); // NEW: Add temporary item
+                btnAddTempOption?.addEventListener('click', () => addTempOptionToDashboard()); // NEW: Add temporary option
                 // PDF Generation Buttons
                 btnGenerateInternalPDF?.addEventListener('click', generateInternalPDF);
                 btnGenerateProposalPDF?.addEventListener('click', generateProposalPDF);
