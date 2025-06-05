@@ -1970,52 +1970,52 @@
             optionContainer.setAttribute('data-temp-option-id', tempOption.id);
 
             optionContainer.innerHTML = `
-                <div class="label-container" style="width: 180px; flex-shrink: 0; margin-right: 15px;">
-                    <input type="text" class="temp-option-name" placeholder="Name" value="${tempOption.name || ''}"
-                        style="width: 100%; font-weight: bold; margin-bottom: 5px; box-sizing: border-box;">
-                    <textarea class="temp-option-description" placeholder="Description (optional)" rows="1"
-                        style="width: 100%; font-size: 0.8em; min-height: 18px; box-sizing: border-box; resize: vertical;">${tempOption.description || ''}</textarea>
-                </div>
+        <div class="label-container" style="width: 180px; flex-shrink: 0; margin-right: 15px;">
+            <input type="text" class="temp-option-name" placeholder="Name" value="${tempOption.name || ''}"
+                style="width: 100%; font-weight: bold; margin-bottom: 5px; box-sizing: border-box;">
+            <textarea class="temp-option-description" placeholder="Description (optional)" rows="1"
+                style="width: 100%; font-size: 0.8em; min-height: 18px; box-sizing: border-box; resize: vertical;">${tempOption.description || ''}</textarea>
+        </div>
 
-                <div class="value-container" style="display: flex; align-items: center; max-width: 200px; margin-right: 15px; flex-shrink: 0;">
-                    <select class="temp-option-type" style="width: 70px; margin-right: 5px; font-size: 0.9em;">
-                        <option value="Fixed" ${tempOption.type === 'Fixed' ? 'selected' : ''}>Fixed</option>
-                        <option value="Percent" ${tempOption.type === 'Percent' ? 'selected' : ''}>Percent</option>
-                    </select>
-                    <input type="number" class="temp-option-value" placeholder="Value" value="${tempOption.value || 0}"
-                        min="${tempOption.type === 'Percent' ? '-100' : ''}" step="any"
-                        style="width: 80px; text-align: right;">
-                    <span class="value-type-indicator" style="margin-left: 5px; font-weight: bold;">${tempOption.type === 'Percent' ? '%' : '$'}</span>
-                </div>
+        <div class="value-container" style="display: flex; align-items: center; max-width: 200px; margin-right: 15px; flex-shrink: 0;">
+            <select class="temp-option-type" style="width: 70px; margin-right: 5px; font-size: 0.9em;">
+                <option value="Fixed" ${tempOption.type === 'Fixed' ? 'selected' : ''}>Fixed</option>
+                <option value="Percent" ${tempOption.type === 'Percent' ? 'selected' : ''}>Percent</option>
+            </select>
+            <input type="number" class="temp-option-value" placeholder="Value" value="${tempOption.value || 0}"
+                min="${tempOption.type === 'Percent' ? '-100' : ''}" step="any"
+                style="width: 80px; text-align: right;">
+            <span class="value-type-indicator" style="margin-left: 5px; font-weight: bold;">${tempOption.type === 'Percent' ? '%' : '$'}</span>
+        </div>
 
-                <div style="display: flex; flex-direction: column; justify-content: center; margin-right: 15px; flex-shrink: 0; min-width: 120px;">
-                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
-                        <input type="checkbox" class="temp-option-apply-markup" id="temp-option-apply-markup-${tempOption.id}" ${tempOption.applyMarkup ? 'checked' : ''}
-                            style="transform: scale(1.1); margin-right: 5px; flex-shrink: 0;">
-                        <label for="temp-option-apply-markup-${tempOption.id}"
-                            style="font-weight: normal; margin-bottom: 0; padding-top: 0; display: inline; font-size: 0.9em; flex-grow: 1;"
-                            title="If checked, the markup percentage will be applied to this adjustment's value.">Apply Markup?</label>
-                    </div>
-                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
-                        <input type="checkbox" class="temp-option-is-optional" id="temp-option-is-optional-${tempOption.id}" ${tempOption.isOptional ? 'checked' : ''}
-                            style="transform: scale(1.1); margin-right: 5px; flex-shrink: 0;">
-                        <label for="temp-option-is-optional-${tempOption.id}"
-                            style="font-weight: normal; margin-bottom: 0; padding-top: 0; display: inline; font-size: 0.9em; flex-grow: 1;"
-                            title="If checked, this item will be listed as an Optional Addition and not included in the main total.">Make Optional?</label>
-                    </div>
-                    <div style="display: flex; align-items: center;">
-                        <input type="checkbox" class="temp-option-show-on-quote" id="temp-option-show-on-quote-${tempOption.id}" ${tempOption.showOnQuote ? 'checked' : ''}
-                            style="transform: scale(1.1); margin-right: 5px; flex-shrink: 0;">
-                        <label for="temp-option-show-on-quote-${tempOption.id}"
-                            style="font-weight: normal; margin-bottom: 0; padding-top: 0; display: inline; font-size: 0.9em; flex-grow: 1;"
-                            title="If checked, this item will be displayed on the customer proposal PDF.">Show on Quote?</label>
-                    </div>
-                </div>
+        <div style="display: flex; flex-direction: column; justify-content: center; margin-right: 15px; flex-shrink: 0; min-width: 120px;">
+            <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                <input type="checkbox" class="temp-option-apply-markup" id="temp-option-apply-markup-${tempOption.id}" ${tempOption.applyMarkup ? 'checked' : ''}
+                    style="transform: scale(1.1); margin-right: 5px; flex-shrink: 0;">
+                <label for="temp-option-apply-markup-${tempOption.id}"
+                    style="font-weight: normal; margin-bottom: 0; padding-top: 0; display: inline; font-size: 0.9em; flex-grow: 1;"
+                    title="If checked, the markup percentage will be applied to this adjustment's value.">Apply Markup?</label>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                <input type="checkbox" class="temp-option-is-optional" id="temp-option-is-optional-${tempOption.id}" ${tempOption.isOptional ? 'checked' : ''}
+                    style="transform: scale(1.1); margin-right: 5px; flex-shrink: 0;">
+                <label for="temp-option-is-optional-${tempOption.id}"
+                    style="font-weight: normal; margin-bottom: 0; padding-top: 0; display: inline; font-size: 0.9em; flex-grow: 1;"
+                    title="If checked, this item will be listed as an Optional Addition and not included in the main total.">Make Optional?</label>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <input type="checkbox" class="temp-option-show-on-quote" id="temp-option-show-on-quote-${tempOption.id}" ${tempOption.showOnQuote ? 'checked' : ''}
+                    style="transform: scale(1.1); margin-right: 5px; flex-shrink: 0;">
+                <label for="temp-option-show-on-quote-${tempOption.id}"
+                    style="font-weight: normal; margin-bottom: 0; padding-top: 0; display: inline; font-size: 0.9em; flex-grow: 1;"
+                    title="If checked, this item will be displayed on the customer proposal PDF.">Show on Quote?</label>
+            </div>
+        </div>
 
-                <div style="margin-left: auto; padding-top: 5px; flex-shrink: 0;">
-                    <button class="delete-button delete-temp-option-button" style="padding: 2px 5px; font-size: 0.85em;">Del</button>
-                </div>
-            `;
+        <div style="margin-left: auto; padding-top: 5px; flex-shrink: 0;">
+            <button class="delete-button delete-temp-option-button" style="padding: 2px 5px; font-size: 0.85em;">Del</button>
+        </div>
+    `;
             dashboardTempOptionsDiv.appendChild(optionContainer);
 
             // Get references and attach event listeners
@@ -2031,49 +2031,73 @@
 
             // Store the original base value for markup calculations.
             // This is the value entered *before* markup is applied to it.
-            let originalBaseValue = parseFloat(tempOption.value) || 0;
+            // We will now store this directly on the valueInput element, so it's tied to the specific input.
+            valueInput.dataset.originalBaseValue = tempOption.value; // Store the initial base value here
 
+            // This internal function will be called on any relevant change to the temporary option's fields
             const updateTempOptionDisplay = (eventSource = null) => {
                 const markupRate = (parseFloat(currentMarkup) || 0) / 100;
 
                 typeIndicator.textContent = typeSelect.value === 'Percent' ? '%' : '$';
                 valueInput.min = typeSelect.value === 'Percent' ? '-100' : 'any';
 
+                // Get the current value from the input. This could be a marked-up value.
+                let displayedValueFromInput = parseFloat(valueInput.value) || 0;
+
+                // Retrieve the stored original base value for calculations.
+                // This is the "true" base cost before applying markup.
+                let internalBaseValue = parseFloat(valueInput.dataset.originalBaseValue) || 0;
+
+                // Logic to update internalBaseValue based on user input or checkbox changes
                 if (eventSource === valueInput) {
-                    // If user manually changed value, this is the new original base value.
-                    originalBaseValue = parseFloat(valueInput.value) || 0;
-                } else if (eventSource === applyMarkupCheckbox || eventSource === typeSelect || eventSource === isOptionalCheckbox) {
-                    // If applyMarkup, type, or optional status changed, we need to get the *current displayed* value
-                    // and reverse-calculate to get the original base value that was in the input before the markup was applied.
-                    // This prevents cumulative markup errors if they toggle markup repeatedly.
-                    const currentlyDisplayedValue = parseFloat(valueInput.value) || 0;
+                    // If the user directly typed into the value input:
+                    // The value typed is considered the new *displayed* value.
+                    // If markup is applied, we need to reverse it to get the new `internalBaseValue`.
                     if (typeSelect.value === 'Fixed' && applyMarkupCheckbox.checked && markupRate > 0) {
-                        originalBaseValue = currentlyDisplayedValue / (1 + markupRate);
+                        internalBaseValue = displayedValueFromInput / (1 + markupRate);
                     } else {
-                        originalBaseValue = currentlyDisplayedValue;
+                        internalBaseValue = displayedValueFromInput;
                     }
+                    valueInput.dataset.originalBaseValue = internalBaseValue; // Update stored base value
+                } else if (eventSource === applyMarkupCheckbox || eventSource === typeSelect || eventSource === null) {
+                    // If 'Apply Markup?' checkbox or 'Type' dropdown changed, or it's initial load:
+                    // We use the current `internalBaseValue` (which reflects the last manual input or initial load)
+                    // to calculate the `valueToDisplay`. The `internalBaseValue` itself doesn't change for these events.
+                    // No action needed on internalBaseValue for these events, it's used for calculation.
+                } else if (eventSource === isOptionalCheckbox || eventSource === showOnQuoteCheckbox) {
+                    // These only affect categorization, not the value itself.
+                    // So we just update totals and save, then exit this function.
+                    console.log(`[updateTempOptionDisplay] isOptionalCheckbox or showOnQuoteCheckbox changed. Not modifying item value or markup state.`);
+                    updateRunningTotals();
+                    saveDashboardStateToSession();
+                    return; // Crucially, exit here.
                 }
 
-                let valueToDisplay = originalBaseValue;
+                // Now, calculate the value that *should be displayed* in the input field.
+                let valueToDisplayInInput = internalBaseValue;
                 if (typeSelect.value === 'Fixed' && applyMarkupCheckbox.checked) {
-                    valueToDisplay = originalBaseValue * (1 + markupRate);
+                    valueToDisplayInInput = internalBaseValue * (1 + markupRate);
                 }
 
-                if (parseFloat(valueInput.value) !== parseFloat(valueToDisplay.toFixed(2))) {
-                    valueInput.value = valueToDisplay.toFixed(2);
+                // Update the input's value if it's numerically different, to prevent unnecessary DOM updates.
+                const tolerance = 0.001; // For floating point comparison to account for floating point inaccuracies
+                if (Math.abs(parseFloat(valueInput.value) - parseFloat(valueToDisplayInInput.toFixed(2))) > tolerance) {
+                    valueInput.value = valueToDisplayInInput.toFixed(2);
                 }
 
+                // Always trigger a full recalculation and save after any change to the temporary option.
                 updateRunningTotals();
                 saveDashboardStateToSession();
             };
 
-            nameInput.addEventListener('input', () => updateTempOptionDisplay(nameInput));
-            descInput.addEventListener('input', () => updateTempOptionDisplay(descInput));
-            typeSelect.addEventListener('change', () => updateTempOptionDisplay(typeSelect));
-            valueInput.addEventListener('input', () => updateTempOptionDisplay(valueInput));
-            applyMarkupCheckbox.addEventListener('change', () => updateTempOptionDisplay(applyMarkupCheckbox));
-            isOptionalCheckbox.addEventListener('change', () => updateTempOptionDisplay(isOptionalCheckbox));
-            showOnQuoteCheckbox.addEventListener('change', () => saveDashboardStateToSession());
+            // Attach event listeners to the new elements
+            nameInput.addEventListener('input', () => { updateTempOptionDisplay(nameInput); });
+            descInput.addEventListener('input', () => { updateTempOptionDisplay(descInput); });
+            typeSelect.addEventListener('change', () => { updateTempOptionDisplay(typeSelect); });
+            valueInput.addEventListener('input', () => { updateTempOptionDisplay(valueInput); });
+            applyMarkupCheckbox.addEventListener('change', () => { updateTempOptionDisplay(applyMarkupCheckbox); });
+            isOptionalCheckbox.addEventListener('change', () => { updateTempOptionDisplay(isOptionalCheckbox); });
+            showOnQuoteCheckbox.addEventListener('change', () => { updateTempOptionDisplay(showOnQuoteCheckbox); });
 
             deleteButton.addEventListener('click', () => {
                 if (confirm('Are you sure you want to remove this temporary adjustment?')) {
@@ -2081,12 +2105,12 @@
                     if (dashboardTempOptionsDiv.children.length === 0) {
                         dashboardTempOptionsDiv.innerHTML = '<p><i>No temporary options added.</i></p>';
                     }
-                    updateRunningTotals();
-                    saveDashboardStateToSession();
+                    updateRunningTotals(); // Re-calculate overall totals
+                    saveDashboardStateToSession(); // Save state after deletion
                 }
             });
 
-            updateTempOptionDisplay();
+            updateTempOptionDisplay(null); // Initial calculation on creation (pass null for initial setup)
         }
 
         function generateScopeId() { return `scope_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`; }
@@ -3654,7 +3678,7 @@
 
         function calculateOptionsAndFinalTotal(baseEstimate) {
             let totalOptionsAdjustment = 0; // Sum of non-optional adjustments (including their markup)
-            let additionalMarkupAmount = 0; // Markup explicitly added to adjustments from NON-OPTIONAL adjustments
+            let additionalMarkupAmount = 0; // This should now primarily be for the overall markup on items.
 
             // Lists to collect details for PDF display later
             const appliedAdjustmentsListForPdf = []; // For non-optional adjustments that affect main total
@@ -3700,10 +3724,14 @@
                             finalAmountForThisAdjustment = baseEstimate.totalBeforeOptions * (adjustmentValue / 100);
                         }
 
-                        // If 'Apply Markup?' is checked, calculate its markup amount regardless of optional status
+                        // If 'Apply Markup?' is checked for a permanent option, calculate its markup.
+                        // For permanent options, this markup is added to `totalOptionsAdjustment` and the PDF list.
                         if (applyMarkup) {
                             markupOnThisAdjustment = finalAmountForThisAdjustment * markupRate;
-                            // Only add to overall additionalMarkupAmount if it's NOT optional
+                            // This markup is part of the option's value, but for permanent options,
+                            // if it's NOT optional, it also *increases* the overall markup line (historical logic).
+                            // If this is *not* desired for permanent options, this `if (!isOptional)` line needs to be removed.
+                            // Assuming for now, permanent options' markup affects `additionalMarkupAmount` if not optional.
                             if (!isOptional) {
                                 additionalMarkupAmount += markupOnThisAdjustment;
                             }
@@ -3724,7 +3752,7 @@
                             }
                         } else { // Permanent Standard Adjustment (not optional)
                             totalOptionsAdjustment += finalAmountForThisAdjustment;
-                            totalOptionsAdjustment += markupOnThisAdjustment;
+                            totalOptionsAdjustment += markupOnThisAdjustment; // Add markup to this item's total
 
                             if (dashboardShowCheckbox?.checked) {
                                 appliedAdjustmentsListForPdf.push({
@@ -3751,66 +3779,64 @@
                 const nameInput = container.querySelector('.temp-option-name');
                 const descInput = container.querySelector('.temp-option-description');
                 const typeSelect = container.querySelector('.temp-option-type');
-                const valueInput = container.querySelector('.temp-option-value'); // This now contains the *displayed* value (potentially marked up)
+                const valueInput = container.querySelector('.temp-option-value'); // This contains the *displayed* value (potentially marked up)
                 const applyMarkupCheckbox = container.querySelector('.temp-option-apply-markup');
                 const isOptionalCheckbox = container.querySelector('.temp-option-is-optional');
                 const showOnQuoteCheckbox = container.querySelector('.temp-option-show-on-quote');
 
-                const name = nameInput?.value.trim() || 'Unnamed Temp Adjustment';
+                const name = nameInput?.value.trim() || '';
                 const description = descInput?.value.trim() || '';
                 const type = typeSelect?.value || 'Fixed';
-                const displayedValue = parseFloat(valueInput?.value) || 0; // Get the displayed value
+                const displayedValue = parseFloat(valueInput?.value) || 0; // Get the displayed value from the input field.
                 const applyMarkup = applyMarkupCheckbox?.checked ?? false;
                 const isOptional = isOptionalCheckbox?.checked ?? false;
                 const showOnQuote = showOnQuoteCheckbox?.checked ?? true;
 
-                // Calculate the original base value of the adjustment (before any markup was applied to it)
-                let baseValueForCalc = displayedValue;
-                if (type === 'Fixed' && applyMarkup && markupRate > 0) {
-                    baseValueForCalc = displayedValue / (1 + markupRate);
+                // Only process if it has a name or a non-zero displayed value.
+                // This prevents empty temporary rows from affecting calculations.
+                if (name.trim() === '' && displayedValue === 0) {
+                    return; // Skip this iteration if it's an empty/default temporary option
                 }
 
-                let finalAmountForThisAdjustment = baseValueForCalc; // This is the base value of the adjustment itself
-                let markupOnThisAdjustment = 0; // Markup calculated on *this specific adjustment*
+                // For temporary options, the `valueInput.value` already reflects the desired total amount
+                // (including its own markup if 'applyMarkup' was checked on the item itself by updateTempOptionDisplay).
+                let finalAmountForThisAdjustment = displayedValue;
 
                 if (type === 'Percent') {
-                    finalAmountForThisAdjustment = baseEstimate.totalBeforeOptions * (baseValueForCalc / 100);
+                    // For percent type, `displayedValue` is the percentage, so we apply it to totalBeforeOptions.
+                    // Markup for percent options is generally handled differently and not applied to their `amount` directly here
+                    // unless the percentage itself is considered the "marked up" value.
+                    finalAmountForThisAdjustment = baseEstimate.totalBeforeOptions * (displayedValue / 100);
                 }
 
-                // If it applies markup, calculate that specific markup amount
-                if (applyMarkup) {
-                    markupOnThisAdjustment = finalAmountForThisAdjustment * markupRate;
-                    // Only add to overall additionalMarkupAmount if it's NOT optional
-                    if (!isOptional) {
-                        additionalMarkupAmount += markupOnThisAdjustment;
-                    }
-                }
+                // The markup for this temporary item is ALREADY included in `finalAmountForThisAdjustment`
+                // because `updateTempOptionDisplay` already ensured it was in `valueInput.value`.
+                // Therefore, we do NOT add to `additionalMarkupAmount` here for temporary options.
 
                 if (isOptional) { // Temporary Optional item
                     if (showOnQuote) {
                         optionalAdditionsListForPdf.push({
                             name: name,
                             description: description,
-                            amount: finalAmountForThisAdjustment + markupOnThisAdjustment, // Include its own markup in optional amount
+                            amount: finalAmountForThisAdjustment, // This already includes its own markup if applicable
                             type: type,
                             isOptional: true,
-                            isTemp: true,
+                            isTemp: true, // Indicate it's a temporary item
                             showOnQuote: showOnQuote,
-                            appliesMarkup: applyMarkup
+                            appliesMarkup: applyMarkup // For internal PDF clarity
                         });
                     }
                 } else { // Temporary Standard Adjustment (not optional)
-                    totalOptionsAdjustment += finalAmountForThisAdjustment;
-                    totalOptionsAdjustment += markupOnThisAdjustment;
+                    totalOptionsAdjustment += finalAmountForThisAdjustment; // This already includes its own markup if applicable
 
                     if (showOnQuote) {
                         appliedAdjustmentsListForPdf.push({
                             name: name,
                             description: description,
-                            amount: finalAmountForThisAdjustment + markupOnThisAdjustment,
+                            amount: finalAmountForThisAdjustment,
                             type: type,
                             isOptional: false,
-                            isTemp: true,
+                            isTemp: true, // Indicate it's a temporary item
                             appliesMarkup: applyMarkup,
                             showOnQuote: showOnQuote
                         });
@@ -3822,17 +3848,17 @@
             // The grand total now includes:
             // 1. The base estimate's total before options (items + markup on items)
             // 2. The total of all non-optional adjustments (`totalOptionsAdjustment`), which now
-            //    already includes their own markup.
+            //    already includes their own markup (for temporary options) or had it added (for permanent).
             const grandTotal = baseEstimate.totalBeforeOptions + totalOptionsAdjustment;
 
             return {
-                optionsAdjustment: totalOptionsAdjustment,
+                optionsAdjustment: totalOptionsAdjustment, // Total of non-optional adjustments
                 grandTotal: grandTotal,
                 appliedOptionsList: appliedAdjustmentsListForPdf,
                 optionalAdditionsList: optionalAdditionsListForPdf,
-                additionalMarkupAmount: additionalMarkupAmount, // Sum of all markup specifically from NON-OPTIONAL adjustments
+                additionalMarkupAmount: additionalMarkupAmount, // This only includes markup from permanent non-optional adjustments
                 newSubtotal: baseEstimate.subtotal,
-                newMarkupAmount: baseEstimate.markupAmount + additionalMarkupAmount, // Items markup + NON-OPTIONAL adjustments markup
+                newMarkupAmount: baseEstimate.markupAmount + additionalMarkupAmount, // Items markup + permanent non-optional adjustments markup
                 newTotalBeforeOptions: baseEstimate.totalBeforeOptions + additionalMarkupAmount
             };
         }
@@ -3901,56 +3927,86 @@
                 }
             });
 
-            // Process temporary options explicitly marked as "Make Optional?"
+            // --- Process Temporary Proposal Options / Adjustments ---
             const tempOptionItems = dashboardTempOptionsDiv.querySelectorAll('.dashboard-option-item[data-temp-option-id]');
             tempOptionItems.forEach(container => {
                 const nameInput = container.querySelector('.temp-option-name');
                 const descInput = container.querySelector('.temp-option-description');
                 const typeSelect = container.querySelector('.temp-option-type');
-                const valueInput = container.querySelector('.temp-option-value'); // This is the displayed value
+                const valueInput = container.querySelector('.temp-option-value');
+                const applyMarkupCheckbox = container.querySelector('.temp-option-apply-markup');
                 const isOptionalCheckbox = container.querySelector('.temp-option-is-optional');
                 const showOnQuoteCheckbox = container.querySelector('.temp-option-show-on-quote');
-                const applyMarkupCheckbox = container.querySelector('.temp-option-apply-markup');
 
-
-                const name = nameInput?.value.trim() || 'Unnamed Temp Optional';
+                const name = nameInput?.value.trim() || 'Unnamed Temp Adjustment';
                 const description = descInput?.value.trim() || '';
                 const type = typeSelect?.value || 'Fixed';
-                const displayedValue = parseFloat(valueInput?.value) || 0;
+                const displayedValue = parseFloat(valueInput?.value) || 0; // This is the displayed value in the input field.
+                const applyMarkup = applyMarkupCheckbox?.checked ?? false;
                 const isOptional = isOptionalCheckbox?.checked ?? false;
                 const showOnQuote = showOnQuoteCheckbox?.checked ?? true;
-                const applyMarkup = applyMarkupCheckbox?.checked ?? false;
 
+                // If the temporary option is not selected (no value or quantity), skip it entirely.
+                // This is crucial for temporary options to not appear if no value is entered.
+                if (displayedValue === 0 && (name === 'Unnamed Temp Adjustment' || name === '')) {
+                    return; // Skip this iteration if it's an empty/default temporary option
+                }
 
-                // Only include if it's explicitly marked optional AND shown on quote AND has a non-zero value
-                if (isOptional && showOnQuote && displayedValue !== 0) {
-                    let baseValueForCalc = displayedValue;
-                    if (type === 'Fixed' && applyMarkup && markupRate > 0) {
-                        baseValueForCalc = displayedValue / (1 + markupRate); // Reverse calc to get original cost for markup
+                // For temporary options, the `valueInput.value` already reflects the desired amount,
+                // including its own markup if 'applyMarkup' was checked on the item itself.
+                // We should use `displayedValue` as the `finalAmountForThisAdjustment`.
+                let finalAmountForThisAdjustment = displayedValue;
+                let markupOnThisAdjustment = 0; // This markup is ALREADY part of finalAmountForThisAdjustment if applyMarkup is true.
+
+                // If it's a percentage type, calculate the final amount based on totalBeforeOptions.
+                if (type === 'Percent') {
+                    // For percent type, `displayedValue` is the percentage, so we apply it.
+                    // Markup is typically not applied to percent options at the item level.
+                    // If applyMarkup is checked for a percent, it's usually on the overall estimate.
+                    // We'll treat its displayedValue as the percentage, and the actual dollar impact
+                    // calculated here. Markup on percentage options is more complex and usually applied
+                    // to the grand total.
+                    finalAmountForThisAdjustment = baseEstimate.totalBeforeOptions * (displayedValue / 100);
+
+                    // If applyMarkup is also checked for a PERCENT type, this typically means the percentage itself
+                    // is marked up. This is less common but if intended, the markup logic needs adjustment.
+                    // For now, we assume `applyMarkup` on percent types means its dollar impact is also marked up,
+                    // which is now part of its `finalAmountForThisAdjustment`.
+                    // The core issue is whether 'additionalMarkupAmount' should count markup on this item.
+                }
+
+                // The markup for this item (`markupOnThisAdjustment`) is now implicitly part of `finalAmountForThisAdjustment`
+                // because `updateTempOptionDisplay` already added it to `valueInput.value` (displayedValue).
+                // So, we just need to decide where to add `finalAmountForThisAdjustment`.
+
+                if (isOptional) { // Temporary Optional item
+                    if (showOnQuote) {
+                        optionalAdditionsListForPdf.push({
+                            name: name,
+                            description: description,
+                            amount: finalAmountForThisAdjustment, // This already includes its own markup if applicable
+                            type: type,
+                            isOptional: true,
+                            isTemp: true,
+                            showOnQuote: showOnQuote,
+                            appliesMarkup: applyMarkup
+                        });
                     }
+                } else { // Temporary Standard Adjustment (not optional)
+                    totalOptionsAdjustment += finalAmountForThisAdjustment; // This already includes its own markup if applicable
 
-                    let amount = baseValueForCalc;
-                    if (type === 'Percent') {
-                        amount = currentGrandTotal * (baseValueForCalc / 100); // Apply percentage to the current grand total
+                    if (showOnQuote) {
+                        appliedAdjustmentsListForPdf.push({
+                            name: name,
+                            description: description,
+                            amount: finalAmountForThisAdjustment,
+                            type: type,
+                            isOptional: false,
+                            isTemp: true,
+                            appliesMarkup: applyMarkup,
+                            showOnQuote: showOnQuote
+                        });
                     }
-
-                    // If markup was applied to this optional, add that markup amount to its display
-                    let markupOnThisOptional = 0;
-                    if (applyMarkup) {
-                        markupOnThisOptional = amount * markupRate;
-                    }
-
-                    selectedOptionals.push({
-                        id: container.getAttribute('data-temp-option-id'),
-                        name: name,
-                        description: description,
-                        amount: amount + markupOnThisOptional, // Include its own markup in optional amount
-                        type: type,
-                        showOnQuote: showOnQuote,
-                        isOptional: true,
-                        isTemp: true,
-                        appliesMarkup: applyMarkup // For internal PDF clarity
-                    });
                 }
             });
             return selectedOptionals;
@@ -4172,6 +4228,10 @@
         // This function will collect ALL selected options/adjustments from the dashboard,
         // whether permanent or temporary, and calculate their amounts (including markup if applicable).
         // It does NOT filter by 'showOnQuote' or 'isOptional' because this list is for internal review.
+        // --- NEW HELPER FUNCTION for the Dashboard's Individual Adjustments & Options Display ---
+        // This function will collect ALL selected options/adjustments from the dashboard,
+        // whether permanent or temporary, and calculate their amounts (including markup if applicable).
+        // It does NOT filter by 'showOnQuote' or 'isOptional' because this list is for internal review.
         function _getAllDashboardOptionsForDisplay(finalGrandTotal, baseEstimate) {
             const allActiveOptions = [];
             const markupRate = (parseFloat(baseEstimate.markupPercent) || 0) / 100;
@@ -4229,7 +4289,7 @@
                 const isOptionalCheckbox = container.querySelector('.temp-option-is-optional');
                 const showOnQuoteCheckbox = container.querySelector('.temp-option-show-on-quote');
 
-                const name = nameInput?.value.trim() || 'Unnamed Temp Adjustment';
+                const name = nameInput?.value.trim() || ''; // Ensure name defaults to empty string, not 'Unnamed Temp Adjustment'
                 const description = descInput?.value.trim() || '';
                 const type = typeSelect?.value || 'Fixed';
                 const displayedValue = parseFloat(valueInput?.value) || 0;
@@ -4237,26 +4297,20 @@
                 const isOptional = isOptionalCheckbox?.checked ?? false;
                 const showOnQuote = showOnQuoteCheckbox?.checked ?? true;
 
-                if (displayedValue !== 0) { // Only include if there's a non-zero value
-                    let baseValueForCalc = displayedValue;
-                    if (type === 'Fixed' && applyMarkup && markupRate > 0) {
-                        baseValueForCalc = displayedValue / (1 + markupRate); // Reverse calculate to get original cost
-                    }
+                // Only include if it has a name (even if value is 0)
+                // This is the main change: allows named temporary options to appear even if value is 0.
+                if (name.trim() !== '') {
+                    let amountForDisplay = displayedValue;
 
-                    let amount = baseValueForCalc;
                     if (type === 'Percent') {
-                        amount = finalGrandTotal * (baseValueForCalc / 100);
+                        amountForDisplay = finalGrandTotal * (displayedValue / 100);
                     }
-
-                    let markupOnThisAdjustment = 0;
-                    if (applyMarkup) {
-                        markupOnThisAdjustment = amount * markupRate;
-                    }
+                    // For Fixed types, `displayedValue` already includes its own markup if applyMarkup is true.
 
                     allActiveOptions.push({
                         name: name,
                         description: description,
-                        amount: amount + markupOnThisAdjustment,
+                        amount: amountForDisplay,
                         isOptional: isOptional,
                         isTemp: true,
                         appliesMarkup: applyMarkup,
@@ -4322,19 +4376,38 @@
                     });
                 });
                 console.log("[Session Save] Temporary items read from DOM:", tempItems);
+
                 // NEW: Gather temporary proposal options/adjustments
                 const tempOptions = [];
                 dashboardTempOptionsDiv?.querySelectorAll('.dashboard-option-item[data-temp-option-id]').forEach(container => {
+                    const valueInput = container.querySelector('.temp-option-value');
+                    const applyMarkupChecked = container.querySelector('.temp-option-apply-markup')?.checked ?? false;
+                    const typeSelected = container.querySelector('.temp-option-type')?.value || 'Fixed';
+
+                    // IMPORTANT: When saving, we want to store the *original base value*.
+                    // If it's a Fixed type and markup was applied, we reverse the markup to get the base.
+                    // For Percent type or Fixed without markup, the displayed value is already the base.
+                    let valueToSave = parseFloat(valueInput?.value) || 0; // Start with the displayed value
+
+                    if (typeSelected === 'Fixed' && applyMarkupChecked && (parseFloat(currentMarkup) || 0) > 0) {
+                        // If it's a Fixed type and markup was applied, reverse the markup calculation
+                        // to get back to the original base value that was entered/intended.
+                        const markupRate = (parseFloat(currentMarkup) || 0) / 100;
+                        valueToSave = valueToSave / (1 + markupRate);
+                    }
+                    // For Percent types, `valueInput.value` is already the percentage, which is its base.
+                    // For Fixed types without markup, `valueInput.value` is already the base.
+
+
                     tempOptions.push({
                         id: container.getAttribute('data-temp-option-id'),
                         name: container.querySelector('.temp-option-name')?.value || '',
                         description: container.querySelector('.temp-option-description')?.value || '',
-                        type: container.querySelector('.temp-option-type')?.value || 'Fixed',
-                        // Store the original base value for markup calculation logic, not the displayed value
-                        value: parseFloat(container.querySelector('.temp-option-value')?.value) / ((container.querySelector('.temp-option-apply-markup')?.checked && container.querySelector('.temp-option-type')?.value === 'Fixed') ? (1 + (parseFloat(currentMarkup) || 0) / 100) : 1) || 0,
-                        applyMarkup: container.querySelector('.temp-option-apply-markup')?.checked ?? false,
+                        type: typeSelected,
+                        value: valueToSave, // Save the calculated base value
+                        applyMarkup: applyMarkupChecked,
                         isOptional: container.querySelector('.temp-option-is-optional')?.checked ?? false,
-                        showOnQuote: container.querySelector('.temp-option-show-on-quote')?.checked ?? true // NEW: save showOnQuote
+                        showOnQuote: container.querySelector('.temp-option-show-on-quote')?.checked ?? true
                     });
                 });
                 console.log("[Session Save] Temporary proposal options read from DOM:", tempOptions);
@@ -4377,8 +4450,8 @@
                     scratchpad: scratchpadValue,
                     quantities: quantities,
                     options: optionStates,
-                    tempItems: tempItems, // NEW: Add temporary items
-                    tempOptions: tempOptions // NEW: Add temporary options
+                    tempItems: tempItems,
+                    tempOptions: tempOptions
                 };
                 console.log("[Session Save] dashboardState object prepared for saving:", dashboardState);
 
@@ -4402,6 +4475,9 @@
                     // Clear temporary items display if no state to restore
                     if (dashboardTempItemsDiv) {
                         dashboardTempItemsDiv.innerHTML = '<p><i>No temporary items added.</i></p>';
+                    }
+                    if (dashboardTempOptionsDiv) { // Clear temp options display if no state to restore
+                        dashboardTempOptionsDiv.innerHTML = '<p><i>No temporary options added.</i></p>';
                     }
                     return;
                 }
@@ -4442,18 +4518,26 @@
                     }
                 } else { console.warn("[Session Restore] dashboardTempItemsDiv not found!"); }
 
+                // === START OF THE KEY UPDATE FOR tempOptions ===
                 // NEW: Restore temporary proposal options/adjustments
                 if (dashboardTempOptionsDiv) {
                     dashboardTempOptionsDiv.innerHTML = ''; // Clear initial message
                     if (Array.isArray(savedState.tempOptions) && savedState.tempOptions.length > 0) {
                         console.log("[Session Restore] Restoring temporary options:", savedState.tempOptions);
-                        savedState.tempOptions.forEach(tempOption => addTempOptionToDashboard(tempOption));
+                        savedState.tempOptions.forEach(tempOption => {
+                            // Call addTempOptionToDashboard for each saved temporary option.
+                            // This function will create the DOM element and also call its internal
+                            // updateTempOptionDisplay to correctly apply markup based on the restored state.
+                            addTempOptionToDashboard(tempOption);
+                        });
                     } else {
                         dashboardTempOptionsDiv.innerHTML = '<p><i>No temporary options added.</i></p>';
                     }
                 } else { console.warn("[Session Restore] dashboardTempOptionsDiv not found!"); }
+                // === END OF THE KEY UPDATE FOR tempOptions ===
 
-                // Restore option states
+
+                // Restore option states (for permanent proposal options)
                 const optionItems = dashboardOptionsDiv?.querySelectorAll('.dashboard-option-item');
                 console.log(`[Session Restore] Found ${optionItems?.length ?? 0} option item elements.`);
                 if (optionItems && typeof savedState.options === 'object') {
@@ -4466,6 +4550,7 @@
                             const valueInput = item.querySelector('.option-dashboard-value');
                             const showCheckbox = item.querySelector('.option-dashboard-show-toggle');
                             const optionalCheckbox = item.querySelector('.option-dashboard-is-optional');
+                            // No need to restore originalBaseValue for permanent options as they don't have this markup dynamic
 
                             if (toggleCheckbox) toggleCheckbox.checked = state.selected ?? false;
                             if (valueInput) valueInput.value = state.value ?? 0;
@@ -4488,7 +4573,7 @@
                 if (dashboardTempItemsDiv) {
                     dashboardTempItemsDiv.innerHTML = '<p><i>No temporary items added.</i></p>';
                 }
-                if (dashboardTempOptionsDiv) { // NEW: Clear temp options on error
+                if (dashboardTempOptionsDiv) { // Clear temp options on error
                     dashboardTempOptionsDiv.innerHTML = '<p><i>No temporary options added.</i></p>';
                 }
                 updateRunningTotals();
